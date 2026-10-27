@@ -1,0 +1,30 @@
+# R51-P3-1: resolve the HTTPS allowlist (egress-hosts.conf) into nftables @https_allowed4/6. Runs as root only for
+# CAP_NET_ADMIN; no network access of its own beyond the local resolver (127.0.0.53 over lo).
+[Unit]
+Description=mr-verifier HTTPS egress allowlist refresh
+After=network-online.target systemd-resolved.service nftables.service
+Wants=network-online.target
+Requires=nftables.service
+Before=mr-verifier.service mr-gcp-token.service
+OnFailure=mr-verifier-page@%n.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/mr-verifier/current/deploy/verifier/mr-egress-refresh.sh
+Environment=MR_EGRESS_HOSTS=/etc/mr-verifier/egress-hosts.conf
+CapabilityBoundingSet=CAP_NET_ADMIN
+AmbientCapabilities=
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+RestrictNamespaces=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+SystemCallArchitectures=native
+TimeoutStartSec=60

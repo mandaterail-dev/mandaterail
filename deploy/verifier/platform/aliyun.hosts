@@ -1,0 +1,3 @@
+# aliyun: the co-signing key via the KMS OpenAPI VPC endpoint (RAM policy pins acs:SourceVpc/acs:VpcSourceIp);
+# role credentials come from the metadata service (nftables IMDS), not STS over 443. Only once the owner approves a KMS instance.
+kms-vpc.us-east-1.aliyuncs.com

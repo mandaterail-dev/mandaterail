@@ -1,0 +1,37 @@
+{
+  "name": "mandaterail",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MandateRail \u2014 delegated spend / IntentMandate policy layer between AC2 and x402",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "build": "pnpm -r run build",
+    "test": "pnpm --filter @mandaterail/core test && pnpm --filter @mandaterail/ac2-client test && pnpm --filter @mandaterail/ac2-bridge test && pnpm --filter @mandaterail/sdk test && pnpm --filter @mandaterail/console test && pnpm --filter @mandaterail/storage test && pnpm --filter @mandaterail/middleware-hono test && pnpm --filter @mandaterail/demo-api test && pnpm --filter @mandaterail/web test",
+    "test:storage": "bash scripts/with-state-services.sh sh -c 'pnpm --filter @mandaterail/storage exec vitest run && pnpm --filter @mandaterail/ac2-bridge test && pnpm --filter @mandaterail/console test'",
+    "test:all": "pnpm -r run test --if-present",
+    "demo": "pnpm --filter @mandaterail/demo-api start",
+    "console": "pnpm --filter @mandaterail/console start",
+    "typecheck": "pnpm -r --if-present run typecheck",
+    "create-wallet": "tsx scripts/create-wallet.ts",
+    "e2e:paid": "tsx scripts/e2e-paid.ts",
+    "e2e:ac2-local": "tsx scripts/e2e-ac2-local.ts",
+    "ac2-bridge": "pnpm --filter @mandaterail/ac2-bridge start"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "algosdk": "^3.2.0",
+    "@mandaterail/core": "workspace:*",
+    "@mandaterail/schema": "workspace:*",
+    "@mandaterail/middleware-hono": "workspace:*",
+    "@mandaterail/ac2-client": "workspace:*",
+    "@mandaterail/facilitator-goplausible": "workspace:*"
+  }
+}

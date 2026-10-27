@@ -1,0 +1,20 @@
+node_modules/
+dist/
+build/
+*.tsbuildinfo
+.env
+.env.local
+*.log
+.DS_Store
+coverage/
+.turbo/
+.pnpm-store/
+*.zip
+data/
+*.db
+
+# demo-api receipt store (local)
+apps/demo-api/data/
+
+# local review exports (never commit)
+.ceo-export/

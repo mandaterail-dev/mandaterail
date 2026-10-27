@@ -1,0 +1,13 @@
+# Tokens live 60 min; refresh every 20 min so two failures in a row still leave a valid token. A stale or missing
+# token makes the reconciler page "KMS reconcile ERROR" (it never silently skips a window).
+[Unit]
+Description=refresh the mr-verifier GCP token every 20 min
+
+[Timer]
+OnBootSec=30s
+OnUnitActiveSec=20min
+AccuracySec=30s
+Persistent=true
+
+[Install]
+WantedBy=timers.target

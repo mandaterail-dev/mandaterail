@@ -1,0 +1,12 @@
+# Every 30 min; set entries live 2 h, so three failed refreshes in a row still leave the last good addresses.
+[Unit]
+Description=refresh the mr-verifier HTTPS allowlist every 30 min
+
+[Timer]
+OnBootSec=10s
+OnUnitActiveSec=30min
+AccuracySec=1min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

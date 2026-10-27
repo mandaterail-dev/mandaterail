@@ -1,0 +1,4 @@
+# aliyun (deploy/aliyun, rev 22): ECS metadata service (RAM role STS credentials, tokens required). KMS is reached
+# by name through the OpenAPI VPC endpoint (egress-hosts), so no fixed KMS address: 127.0.0.2 matches nothing.
+define IMDS = 100.100.100.200
+define KMS_VPCE = { 127.0.0.2 }

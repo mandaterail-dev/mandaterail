@@ -1,0 +1,35 @@
+{
+  "_comment": "MainNet KMS key inventory. Public material only. Key order (the owner, 2026-10-22 19:31 ET): aliyun-softkey = the only active co-signer (r51, key file on the Alibaba host, not listed here); GCP Cloud KMS = the MainNet main signer (active.signer); AWS KMS = backup, locked. Backups must not sign for MandateRail; do not delete them. The GCP signer config is deploy/gcp/cloudkms.mainnet.json. Enforced by packages/signer/src/piv/key-order.ts. The GCP key is NOT usable until the live changes in docs/ops/kms-key-order.md are made (version 1 disabled, no IAM binding).",
+  "order": [
+    "aliyun-softkey",
+    "gcp",
+    "aws"
+  ],
+  "active": {
+    "cosigner": "aliyun-softkey",
+    "signer": "gcp"
+  },
+  "gcp": {
+    "role": "active",
+    "status": "active signer (decided 2026-10-22); reported 2026-10-23: key version 1 ENABLED, single key-level signerVerifier binding for mr-signer@; signer VM not created yet (Compute Engine API disabled), see docs/ops/kms-key-order.md",
+    "backend": "cloudkms",
+    "project": "mandaterail-signer-25615",
+    "keyVersionName": "projects/mandaterail-signer-25615/locations/us-east1/keyRings/mandaterail/cryptoKeys/signer/cryptoKeyVersions/1",
+    "serviceAccountEmail": "mr-signer@mandaterail-signer-25615.iam.gserviceaccount.com",
+    "protectionLevel": "SOFTWARE",
+    "pubkeyB64": "wzlH1zl4bLn/eJo0alyNeeGjhoFnPEr+bSXBqdOUXpQ=",
+    "algorandAddress": "YM4UPVZZPBWLT73YTI2GUXENPHQ2HBUBM46EV7TNEXA2TU4UL2KITGDG2Y"
+  },
+  "aws": {
+    "role": "backup",
+    "status": "locked: key policy denies kms:Sign and kms:ScheduleKeyDeletion to all; not wired into the verifier",
+    "backend": "awskms",
+    "region": "us-east-1",
+    "accountId": "860273388508",
+    "keyArn": "arn:aws:kms:us-east-1:860273388508:key/7b2d2a83-0633-439e-8214-713c449fdd0c",
+    "alias": "alias/mandaterail-verifier",
+    "keySpec": "ECC_NIST_EDWARDS25519",
+    "pubkeyB64": "+imTutKhwHJIXfKc7Y34trkVeuiuHz5tiDtKW5nAQow=",
+    "algorandAddress": "7IUZHOWSUHAHESC56KOO3DPYW24RK6XIVYPT43MIHNFFXGOAIKGPPFDPLI"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "Version": "2012-10-17",
+  "Id": "mandaterail-aws-backup-lockdown",
+  "Statement": [
+    {"Sid": "RootKeyAdmin", "Effect": "Allow", "Principal": {"AWS": "arn:aws:iam::860273388508:root"}, "Action": "kms:*", "Resource": "*"},
+    {"Sid": "BackupOnlyDenySignAll", "Effect": "Deny", "Principal": {"AWS": "*"}, "Action": "kms:Sign", "Resource": "*"},
+    {"Sid": "BackupOnlyDenyDeletion", "Effect": "Deny", "Principal": {"AWS": "*"}, "Action": "kms:ScheduleKeyDeletion", "Resource": "*"}
+  ]
+}

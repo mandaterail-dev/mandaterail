@@ -1,0 +1,13 @@
+# common to every platform (rendered after the platform block)
+# GCP: Workload Identity Federation token exchange + impersonation, and the KMS audit-log read (rev 22 open item:
+# from Alibaba this needs X.509 workload identity federation; GCP has no native Alibaba RAM provider)
+sts.googleapis.com
+iamcredentials.googleapis.com
+logging.googleapis.com
+# MainNet chain providers: the co-signer pins dRPC only (operator drpc, blockscan-full). §24 option C: the verifier's
+# egress stays disjoint from the signer's operators (nodely, getblock), so GetBlock and the unused Blockdaemon are gone.
+algorand.drpc.org
+# paging, dead-man, off-host chain
+ntfy.sh
+hc-ping.com
+s3.<b2-region>.backblazeb2.com

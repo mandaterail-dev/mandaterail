@@ -1,0 +1,5 @@
+# Files that must NOT be in the MainNet signer image (R43-P2-3). The image build fails if any is present.
+packages/signer/src/piv/backend-software.ts
+packages/signer/test/
+packages/signer/src/sinks/local-standin.ts
+packages/signer/rehearsal/

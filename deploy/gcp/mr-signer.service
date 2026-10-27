@@ -1,0 +1,59 @@
+# GCP variant of deploy/signer/host/mr-signer.service (rev 15): no WireGuard; the CLI reaches the signer through
+# IAP TCP forwarding (gcloud compute start-iap-tunnel), requests still signed by the requester key.
+# mr-signer (automated attested-release signer), rev 12 §13/§15. Not provisioned anywhere yet.
+# Secrets only in the credential store / 0600 env file; config JSON has none.
+[Unit]
+Description=mr-signer (attested release signer)
+Wants=network-online.target chronyd.service google-guest-agent.service mr-piv-sign.socket
+After=network-online.target chronyd.service google-guest-agent.service mr-piv-sign.socket
+# chronyd must be RUNNING (a pid file does not mean synced; the service checks sync/offset on every request
+# and in the heartbeat, and refuses when unsynced)
+ConditionPathExists=/run/chrony/chronyd.pid
+
+# a refused boot (rollback, minSeq, wiped state) must not loop quietly: 3 tries then stay down (the dead-man fires)
+StartLimitIntervalSec=600
+StartLimitBurst=3
+
+[Service]
+Type=simple
+User=mr-signer
+Group=mr-signer
+SupplementaryGroups=mr-signer
+Environment=MR_SIGNER_CONFIG=/etc/mr-signer/config.json NODE_ENV=production
+# MR_NTFY_TOPIC, MR_HC_PING_URL, MR_B2_KEY_ID, MR_B2_APP_KEY (on GCP: written from Secret Manager at boot by mr-secrets-fetch, see deploy/gcp/README.md) (root:mr-signer 0640 is NOT enough: 0600 root, read by systemd)
+EnvironmentFile=/etc/mr-signer/secrets.env
+ExecStart=/usr/bin/node /opt/mr-signer/current/packages/signer/dist/main.js
+Restart=on-failure
+RestartSec=30
+StateDirectory=mr-signer
+StateDirectoryMode=0700
+ProtectSystem=strict
+ReadWritePaths=/var/lib/mr-signer
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+NoNewPrivileges=yes
+# egress: HTTPS to the pinned providers, B2, ntfy, Healthchecks; ingress: IAP TCP forwarding only (35.235.240.0/20) (nftables does the rest)
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+# (address filtering is done by nftables.conf with per-uid egress rules; systemd IPAddress* can't name hosts)
+CapabilityBoundingSet=
+AmbientCapabilities=
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources @mount @debug
+SystemCallArchitectures=native
+MemoryDenyWriteExecute=no
+LockPersonality=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+RemoveIPC=yes
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

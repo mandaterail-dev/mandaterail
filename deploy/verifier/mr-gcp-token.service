@@ -1,0 +1,30 @@
+# R50-P2: refresh the verifier's read-only GCP token (Workload Identity Federation from the AWS instance role;
+# deploy/gcp/alerts/wif.tf). Runs as mr-verifier (the only uid nftables lets reach IMDS). No key file anywhere.
+[Unit]
+Description=mr-verifier GCP token refresh (WIF, logging.read only)
+After=network-online.target mr-egress-refresh.service
+Wants=network-online.target mr-egress-refresh.service
+OnFailure=mr-verifier-page@%n.service
+
+[Service]
+Type=oneshot
+User=mr-verifier
+Group=mr-verifier
+# MR_AWS_REGION, MR_AWS_ROLE, MR_GCP_WIF_PROVIDER, MR_GCP_READER_SA: identifiers, not secrets
+EnvironmentFile=/etc/mr-verifier/gcp-token.env
+Environment=MR_GCP_TOKEN_FILE=/var/lib/mr-verifier/gcp-token NODE_ENV=production
+ExecStart=/usr/bin/node /opt/mr-verifier/current/packages/signer/dist/verifier/gcp-token.js
+UMask=0077
+ProtectSystem=strict
+# R67-P3-5: same uid as mr-verifier, so the softkey dir is hidden here too
+InaccessiblePaths=-/var/lib/mr-verifier-key
+ReadWritePaths=/var/lib/mr-verifier
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+NoNewPrivileges=yes
+RestrictAddressFamilies=AF_INET AF_INET6
+CapabilityBoundingSet=
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources @mount @debug
+TimeoutStartSec=60

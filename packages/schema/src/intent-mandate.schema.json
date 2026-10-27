@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://mandaterail.dev/schemas/IntentMandate.json",
+  "title": "IntentMandate",
+  "description": "Delegated spend authorization (IntentMandate/v1) for MandateRail",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "principal",
+    "agent",
+    "maxAmount",
+    "asset",
+    "allowlist",
+    "expiresAt",
+    "nonce",
+    "createdAt"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "principal": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Principal id — Algorand address or DID"
+    },
+    "principalPubkey": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Optional ed25519 public key (32 bytes, base64) for key resolution; omitted from canonical signed bytes"
+    },
+    "agent": { "type": "string", "minLength": 1 },
+    "maxAmount": {
+      "type": "string",
+      "pattern": "^\\d+(\\.\\d+)?$",
+      "description": "Maximum spend as decimal string (human units)"
+    },
+    "asset": { "type": "string", "minLength": 1 },
+    "allowlist": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "expiresAt": { "type": "string", "format": "date-time" },
+    "revoked": { "type": "boolean", "default": false },
+    "nonce": { "type": "string", "minLength": 1 },
+    "signature": {
+      "type": ["string", "null"],
+      "description": "ed25519 signature over canonical mandate JSON (base64)"
+    },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "metadata": { "type": "object", "additionalProperties": true }
+  }
+}

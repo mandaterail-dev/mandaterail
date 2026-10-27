@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 64" role="img" aria-label="MandateRail wordmark">
+  <title>MandateRail</title>
+  <g transform="translate(0,0)">
+    <rect x="8" y="22" width="40" height="4.5" rx="1.2" fill="#2B5EA7"/>
+    <rect x="8" y="37" width="40" height="4.5" rx="1.2" fill="#2B5EA7"/>
+    <rect x="26" y="22" width="4.5" height="19.5" rx="1" fill="#2B5EA7"/>
+    <path d="M34 18 L39 23 L48 12" fill="none" stroke="#2B5EA7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="64" y="40" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif"
+        font-size="28" font-weight="600" letter-spacing="-0.3" fill="#0F1419">MandateRail</text>
+</svg>

@@ -1,0 +1,11 @@
+{
+  "_comment": "Key-level IAM for the MainNet signer key (cryptoKeys/signer). Reported applied 2026-10-23 (ops agent; unverified from this repo): exactly this one binding. See docs/ops/kms-key-order.md.",
+  "bindings": [
+    {
+      "role": "roles/cloudkms.signerVerifier",
+      "members": [
+        "serviceAccount:mr-signer@mandaterail-signer-25615.iam.gserviceaccount.com"
+      ]
+    }
+  ]
+}

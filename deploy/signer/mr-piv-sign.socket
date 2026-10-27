@@ -1,0 +1,17 @@
+# R43-P2-4: mr-piv-sign socket. Only mr-signer (group) can connect; mr-peercred-gate re-checks the peer uid.
+[Unit]
+Description=mr-piv-sign helper socket (attestation signing)
+
+[Socket]
+ListenStream=/run/mr-piv/sign.sock
+SocketUser=mr-piv
+SocketGroup=mr-signer
+SocketMode=0660
+DirectoryMode=0710
+Accept=yes
+# one helper process at a time: the helper's state files (used journal, nonces, caps, lock) are not shared concurrently
+MaxConnections=1
+RemoveOnStop=yes
+
+[Install]
+WantedBy=sockets.target

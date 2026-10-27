@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="MandateRail signed-ticket mark">
+  <title>MandateRail signed-ticket</title>
+  <!-- Ticket/stub silhouette with thin rail line through it -->
+  <path d="M10 20
+           H42
+           A6 6 0 0 0 42 32
+           A6 6 0 0 0 42 44
+           H10
+           A4 4 0 0 1 10 36
+           A4 4 0 0 1 10 28
+           A4 4 0 0 1 10 20 Z"
+        fill="none" stroke="#4A5D4E" stroke-width="3" stroke-linejoin="round"/>
+  <!-- Perforation stub line -->
+  <path d="M22 22 L22 42" stroke="#4A5D4E" stroke-width="2" stroke-dasharray="2.5 2.5" stroke-linecap="round"/>
+  <!-- Thin rail through ticket -->
+  <path d="M8 32 H56" stroke="#4A5D4E" stroke-width="2" stroke-linecap="round" opacity="0.85"/>
+</svg>

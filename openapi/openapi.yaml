@@ -1,0 +1,1097 @@
+openapi: 3.1.0
+info:
+  title: MandateRail API
+  version: 0.1.0-draft
+  summary: IntentMandate policy + receipts + AC2 bridge (contract sketch)
+  description: |
+    **Status: DRAFT contract sketch.** This OpenAPI describes the intended and
+    partially implemented HTTP surface for MandateRail. It is **not** a promise
+    of a hosted multi-tenant API server.
+
+    ### Live vs planned
+
+    | Area | Live today (local demos) | Planned |
+    |------|--------------------------|---------|
+    | Health | `demo-api` / `console` / `ac2-bridge` each expose `/health` | Unified gateway health |
+    | Mandates | `console`: list/get/create/revoke; `demo-api`: get + POST `/demo/mandates` | Authenticated merchant-scoped CRUD |
+    | Receipts | `demo-api`: `GET /receipts`, `GET /receipts/{receiptId}` | Merchant-scoped, integrity-protected |
+    | AC2 bridge | `ac2-bridge`: pair/status, pending, sign, approve, reject | Paired-device authn; no mnemonic to agents |
+    | Paid resource | `demo-api` `GET /paid/resource` (402 → settle) as **merchant integration** pattern | Same pattern via middleware packages |
+
+    ### Auth model (third parties)
+
+    See also `docs/api/auth.md`.
+
+    - **Production:** merchant API keys (hashed at rest), scoped to a merchant
+      address; optional IP allowlist. Present via `X-MandateRail-Key`.
+      Key prefixes (validation required): `mr_test_` = TestNet only;
+      `mr_live_` = MainNet only — reject mismatched network at verify time.
+    - **OperatorAuth (AC2):** `OPERATOR_ATTESTATION_MODE=signed-challenge`
+      (required on MainNet / `ALLOW_MAINNET`): `GET /operator/challenge` then
+      `X-MandateRail-Operator-Attestation` signed by an `OPERATOR_ALLOWLIST`
+      Algorand account, for `GET /pending`, `/approve/{id}`, `/reject/{id}`.
+      `token-lab` (TestNet only): `X-MandateRail-Operator-Token`; if token unset,
+      loopback + `ALLOW_INSECURE_DEV=1` only. Separate from merchant ApiKeyAuth.
+    - **Agent callers never receive `ALGORAND_MNEMONIC`.** Signing is only via
+      AC2 bridge `pending → approve` (human / paired device).
+    - **TestNet keys** must be clearly labeled and never mixed with MainNet.
+    - **Localhost-trust is DEV ONLY.** Loopback demos without merchant API keys
+      are for operator laptops / CI — not production authentication.
+    - **CORS:** Demo servers do not implement production CORS. Production
+      gateways must deny-by-default and allowlist exact browser origins.
+      Credentialed cross-site calls to approve/reject/console are forbidden.
+    - **Loopback-only (must not leave 127.0.0.1 without OperatorAuth + controls):**
+      AC2 `/approve`, `/reject`, manual `/sign`, and the console file-store.
+    - **Optional future:** HTTP Message Signatures (`HttpSignature`).
+
+    Institutional voice: no personal bylines. Threat model + punchlists:
+    `docs/security/` (DRAFT — AI security reviewed. Use at your own risk. No third-party audit; not formally verified).
+  license:
+    name: Apache-2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  contact:
+    name: MandateRail engineering
+servers:
+  - url: https://mr-api.8-221-97-26.sslip.io
+    description: Live public TestNet demo-api (TestNet only; AI security reviewed, use at your own risk)
+    x-mandaterail-surface: demo-dev
+  - url: https://mr-console.8-221-97-26.sslip.io
+    description: Live public TestNet console (signed-challenge OperatorAuth on every /mandates route; AI security reviewed, use at your own risk)
+    x-mandaterail-surface: console-dev
+  - url: https://mr-bridge.8-221-97-26.sslip.io
+    description: Live public TestNet AC2 bridge (signed-challenge OperatorAuth; AI security reviewed, use at your own risk)
+    x-mandaterail-surface: ac2-bridge-dev
+  - url: http://127.0.0.1:8787
+    description: Local demo-api (DEV ONLY — localhost trust; not a public product API)
+    x-mandaterail-surface: demo-dev
+  - url: http://127.0.0.1:8788
+    description: Local console mandate file-store (DEV ONLY — console-dev; not public product API)
+    x-mandaterail-surface: console-dev
+  - url: http://127.0.0.1:8790
+    description: Local AC2 bridge (DEV ONLY — default bind 127.0.0.1; OperatorAuth on approve/reject)
+    x-mandaterail-surface: ac2-bridge-dev
+tags:
+  - name: Health
+  - name: Mandates
+  - name: Receipts
+  - name: AC2Bridge
+  - name: MerchantIntegration
+paths:
+  /health:
+    get:
+      tags: [Health]
+      summary: Liveness and config hints
+      description: |
+        **Live** on demo-api, console, and ac2-bridge (response shapes differ slightly).
+
+        demo-api returns network, merchant configured flag (address or null),
+        USDC ASA id, and related price/config hints for operators.
+      operationId: getHealth
+      responses:
+        "200":
+          description: Service is up
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+              examples:
+                demoApi:
+                  value:
+                    ok: true
+                    service: mandaterail-demo-api
+                    network: "algorand:SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI="
+                    merchantConfigured: true
+                    usdcAsaId: "10458941"
+                    priceUsdc: "0.01"
+
+  /mandates:
+    get:
+      tags: [Mandates]
+      summary: List mandates
+      description: |
+        **Live (console):** `GET /mandates` → `{ items: IntentMandate[] }`.
+        **Planned:** merchant-scoped pagination + API key auth.
+        demo-api does not currently list; it only gets by id under `/demo/mandates/{id}`.
+        **Console auth:** signed-challenge `OperatorAuth` (`X-MandateRail-Operator-Attestation`)
+        over `GET /operator/challenge?action=mandate.list&id=mandates` on the console (audience
+        `mandaterail-console`; bridge challenges are not accepted), signed by an
+        `OPERATOR_ALLOWLIST` account. In local-only mode (not signed-challenge) only
+        direct loopback callers with no proxy headers are allowed; non-loopback binds
+        refuse to start. Rate-limited (429), body limit (413), `Cache-Control: no-store`.
+      operationId: listMandates
+      x-mandaterail-surface: console-dev
+      security:
+        - OperatorAuth: []
+      responses:
+        "401": { description: OperatorAuth failed (missing / forged / non-allowlisted / wrong action or id) }
+        "429": { description: rate limited }
+        "200":
+          description: Mandate list
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/IntentMandate"
+    post:
+      tags: [Mandates]
+      summary: Create mandate
+      description: |
+        **Live (console):** `POST /mandates` validates with Zod and persists to JSON store.
+        Without a real ed25519 signature the record is `unsigned-draft` (never authorized for execute).
+        **Signed create:** with a real AC2 signature the body is stored exactly as signed (no defaults,
+        `createdAt` or `metadata` added); `createdAt` is required and skew-checked, the verify key is
+        bound to `principal`, and the console records a server-side verified flag.
+        **Live (demo-api):** `POST /demo/mandates` stores unsigned/signed bodies in memory.
+        **Planned:** require verified ed25519 signature + ApiKeyAuth; no placeholder sigs.
+        **Console auth:** signed-challenge `OperatorAuth` (`X-MandateRail-Operator-Attestation`)
+        over `GET /operator/challenge?action=mandate.create&id={mandate id from the body; required in signed-challenge mode}` on the console (audience
+        `mandaterail-console`; bridge challenges are not accepted), signed by an
+        `OPERATOR_ALLOWLIST` account. In local-only mode (not signed-challenge) only
+        direct loopback callers with no proxy headers are allowed; non-loopback binds
+        refuse to start. Rate-limited (429), body limit (413), `Cache-Control: no-store`.
+      operationId: createMandate
+      x-mandaterail-surface: console-dev
+      security:
+        - OperatorAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IntentMandateCreate"
+      responses:
+        "401": { description: OperatorAuth failed (missing / forged / non-allowlisted / wrong action or id) }
+        "429": { description: rate limited }
+        "413": { description: body too large (CONSOLE_MAX_BODY_BYTES) }
+        "503": { description: store full (CONSOLE_MAX_MANDATES) }
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IntentMandate"
+        "400":
+          description: |
+            Rejected create. `error` is one of:
+            - `invalid_json`: body is not a JSON object
+            - `invalid_id`: `id` present but not `^[A-Za-z0-9._:-]{1,128}$`
+            - `id_required`: signed-challenge mode needs a client-chosen `id` (the challenge subject)
+            - `already_revoked`: `revoked: true` on create
+            - `invalid_mandate`: schema validation failed (`details` holds the Zod format)
+            - `signed_create_requires_createdAt`: a signed create must carry `createdAt` (it is signed)
+            - `invalid_createdAt`: signed `createdAt` is not ISO 8601, or is more than 15 min in the past or 2 min in the future
+            - `signed_fields_changed`: schema parsing would change the signed canonical bytes
+            - `invalid_signature`: the AC2 signature does not verify against the key bound to `principal`
+              (Algorand address, or Ed25519 `did:key` with a matching `principalPubkey`)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                invalidSignature:
+                  value: { error: invalid_signature, message: AC2 signature did not verify }
+                signedFieldsChanged:
+                  value: { error: signed_fields_changed, message: the stored mandate would differ from the signed bytes; send the full canonical mandate }
+        "409":
+          description: "`create_failed` (e.g. duplicate id). Generic message; details are logged server-side only."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /mandates/{mandateId}:
+    get:
+      tags: [Mandates]
+      summary: Get mandate by id
+      description: |
+        **Live (console):** `GET /mandates/{id}`.
+        **Live (demo-api):** `GET /demo/mandates/{id}` (path prefix differs — unify in gateway).
+        **Console auth:** signed-challenge `OperatorAuth` (`X-MandateRail-Operator-Attestation`)
+        over `GET /operator/challenge?action=mandate.read&id={mandateId}` on the console (audience
+        `mandaterail-console`; bridge challenges are not accepted), signed by an
+        `OPERATOR_ALLOWLIST` account. In local-only mode (not signed-challenge) only
+        direct loopback callers with no proxy headers are allowed; non-loopback binds
+        refuse to start. Rate-limited (429), body limit (413), `Cache-Control: no-store`.
+      operationId: getMandate
+      x-mandaterail-surface: console-dev
+      security:
+        - OperatorAuth: []
+      parameters:
+        - $ref: "#/components/parameters/MandateId"
+      responses:
+        "401": { description: OperatorAuth failed (missing / forged / non-allowlisted / wrong action or id) }
+        "429": { description: rate limited }
+        "200":
+          description: Mandate
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IntentMandate"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /mandates/{mandateId}/revoke:
+    post:
+      tags: [Mandates]
+      summary: Revoke mandate
+      description: |
+        **Live (console):** `POST /mandates/{id}/revoke`.
+        **Planned:** authenticated revoke with propagation to merchants (see threat model T-RP-03).
+        **Console auth:** signed-challenge `OperatorAuth` (`X-MandateRail-Operator-Attestation`)
+        over `GET /operator/challenge?action=mandate.revoke&id={mandateId}` on the console (audience
+        `mandaterail-console`; bridge challenges are not accepted), signed by an
+        `OPERATOR_ALLOWLIST` account. In local-only mode (not signed-challenge) only
+        direct loopback callers with no proxy headers are allowed; non-loopback binds
+        refuse to start. Rate-limited (429), body limit (413), `Cache-Control: no-store`.
+      operationId: revokeMandate
+      x-mandaterail-surface: console-dev
+      security:
+        - OperatorAuth: []
+      parameters:
+        - $ref: "#/components/parameters/MandateId"
+      responses:
+        "401": { description: OperatorAuth failed (missing / forged / non-allowlisted / wrong action or id) }
+        "429": { description: rate limited }
+        "200":
+          description: Revoked mandate
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IntentMandate"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /mandates/{mandateId}/authorize-check:
+    post:
+      tags: [Mandates]
+      summary: Check whether a stored mandate is authorized for execute
+      description: |
+        **Live (console):** runs the same policy path as the merchant middleware
+        (signature, allowlist, amount, asset, expiry, revoked) against a stored mandate.
+        Unsigned drafts, console stub signatures, revoked and invalid mandates get 403.
+        **Console auth:** signed-challenge `OperatorAuth` over
+        `GET /operator/challenge?action=mandate.read&id={mandateId}` (audience `mandaterail-console`),
+        signed by an `OPERATOR_ALLOWLIST` account. Local-only mode: direct loopback only.
+        Rate-limited (429), `Cache-Control: no-store`.
+      operationId: authorizeCheckMandate
+      x-mandaterail-surface: console-dev
+      security:
+        - OperatorAuth: []
+      parameters:
+        - $ref: "#/components/parameters/MandateId"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                merchantId: { type: string, description: "Defaults to the first allowlist entry" }
+                amount: { type: string, description: "Defaults to maxAmount" }
+                asset: { type: string, description: "Defaults to the mandate asset" }
+      responses:
+        "200":
+          description: Authorized for execute
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, authorization]
+                properties:
+                  ok: { type: boolean, enum: [true] }
+                  authorization: { $ref: "#/components/schemas/MandateAuthorization" }
+                  mandateId: { type: string }
+                  note: { type: string }
+        "401": { description: OperatorAuth failed (missing / forged / non-allowlisted / wrong action or id) }
+        "403":
+          description: Not authorized (unsigned draft, stub, revoked, invalid signature or policy failure)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean, enum: [false] }
+                  error: { type: string }
+                  message: { type: string }
+                  authorization: { $ref: "#/components/schemas/MandateAuthorization" }
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429": { description: rate limited }
+
+  /receipts:
+    get:
+      tags: [Receipts]
+      summary: List settlement receipts
+      description: |
+        **Live (demo-api):** `GET /receipts?limit=50`.
+        **Planned:** merchant-scoped; no global unauthenticated list.
+      operationId: listReceipts
+      security:
+        - ApiKeyAuth: []
+        - {}
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 500
+            default: 50
+      responses:
+        "200":
+          description: Receipts
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [receipts]
+                properties:
+                  receipts:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Receipt"
+
+  /receipts/{receiptId}:
+    get:
+      tags: [Receipts]
+      summary: Get receipt by id
+      description: |
+        **Live (demo-api):** `GET /receipts/{receiptId}`.
+        Prefer on-chain `txId` as source of truth; local JSON is a demo index.
+      operationId: getReceipt
+      security:
+        - ApiKeyAuth: []
+        - {}
+      parameters:
+        - name: receiptId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Receipt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Receipt"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /pair/status:
+    get:
+      tags: [AC2Bridge]
+      summary: AC2 pairing status (GET)
+      description: |
+        **Live (ac2-bridge).** Returns `paired` and `mode`
+        (`auto-local` | `manual` | `unpaired`).
+        `auto-local` is CI/DEV only and may use `ALGORAND_MNEMONIC` on the bridge host —
+        agents must never receive that mnemonic.
+      operationId: getPairStatus
+      responses:
+        "200":
+          description: Pairing status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PairStatus"
+    post:
+      tags: [AC2Bridge]
+      summary: AC2 pairing status (POST)
+      description: |
+        **Live (ac2-bridge).** Same as GET; may include `pendingCount`.
+      operationId: postPairStatus
+      responses:
+        "200":
+          description: Pairing status
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PairStatus"
+                  - type: object
+                    properties:
+                      pendingCount:
+                        type: integer
+                        minimum: 0
+
+  /operator/challenge:
+    get:
+      tags: [AC2Bridge]
+      summary: Issue a single-use operator challenge (signed-challenge mode)
+      description: |
+        Returns a short-TTL (default 120 s), single-use nonce bound to
+        `action` + `id`. Sign `message` with an `OPERATOR_ALLOWLIST` Algorand
+        account and send base64(JSON) evidence in
+        `X-MandateRail-Operator-Attestation`:
+        `{ nonce, address, format: "algosdk"|"arc60", signature, data?, authenticatorData? }`.
+        - `algosdk`: `signature = algosdk.signBytes(utf8(message))` ("MX" prefix).
+        - `arc60`: wallet `signData` over base64 SIWA JSON whose `statement` is
+          `message` and `nonce` is the nonce; Ed25519 over
+          sha256(data) || sha256(authenticatorData).
+        Any well-formed `id` (`^[A-Za-z0-9-]{1,64}$`) gets a challenge (no
+        pending-id oracle; unknown ids fail with 404 only after auth).
+        Rate-limited per client IP and globally over a rolling 60 s window
+        (`OPERATOR_CHALLENGE_RATE_PER_IP` default 30, max 120;
+        `OPERATOR_CHALLENGE_RATE_GLOBAL` default 600, max 800) → 429 +
+        `Retry-After`. Client IP is the socket address unless
+        `AC2_BRIDGE_TRUSTED_PROXY_HOPS` (default 0 = off) is set.
+        `Cache-Control: no-store`. 404 in `token-lab` mode. Internal AI review only.
+        The console serves the same endpoint with actions
+        `mandate.create|mandate.revoke|mandate.read|mandate.list` (id `mandates`
+        for list) and its own audience `mandaterail-console`.
+      operationId: getOperatorChallenge
+      parameters:
+        - name: action
+          in: query
+          required: true
+          schema: { type: string, enum: [approve, reject, list] }
+        - name: id
+          in: query
+          required: true
+          description: Pending approval id, or `pending` for action=list
+          schema: { type: string }
+      responses:
+        "200":
+          description: Challenge
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [nonce, action, subjectId, expiresAt, message]
+                properties:
+                  nonce: { type: string }
+                  action: { type: string }
+                  subjectId: { type: string }
+                  audience: { type: string }
+                  issuedAt: { type: string, format: date-time }
+                  expiresAt: { type: string, format: date-time }
+                  message: { type: string }
+        "400": { description: invalid action or malformed subject id }
+        "404": { description: token-lab mode }
+        "429": { description: rate limited (Retry-After) }
+
+  /pending:
+    get:
+      tags: [AC2Bridge]
+      summary: List pending sign approvals
+      description: |
+        **Live (ac2-bridge).** Operator / phone UI polls this queue. Agents must
+        poll `GET /requests/{id}/status` instead. `Cache-Control: no-store`.
+        **Auth:** `OperatorAuth` (P1-3 / T-BR-03). signed-challenge: challenge
+        `action=list&id=pending`. token-lab: operator token or loopback lab.
+      operationId: listPending
+      security:
+        - OperatorAuth: []
+      responses:
+        "401":
+          description: OperatorAuth failed
+        "200":
+          description: Pending approvals
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [pending]
+                properties:
+                  pending:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PendingApproval"
+
+  /sign:
+    post:
+      tags: [AC2Bridge]
+      summary: Submit signing request
+      description: |
+        **Live (ac2-bridge).**
+        - If `AC2_BRIDGE_AUTO_LOCAL=true` (requires `ALLOW_INSECURE_DEV=1` + TestNet
+          `NETWORK` or process exits), signs immediately (CI) and returns signature.
+        - Otherwise **manual mode** enqueues (signed-challenge: loopback only;
+          token-lab: OperatorAuth) and returns `202` with
+          `{ id, status: pending, requesterToken, statusUrl }`. `requesterToken`
+          is returned once; poll `GET /requests/{id}/status` with it.
+        Agent callers must not hold payer mnemonics. Prefer loopback bind.
+      operationId: submitSign
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SigningRequest"
+      responses:
+        "200":
+          description: Auto-local signature result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignatureResult"
+        "202":
+          description: Queued for human approval
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [id, status, requesterToken]
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  status:
+                    type: string
+                    const: pending
+                  requesterToken:
+                    type: string
+                    description: 256-bit secret for GET /requests/{id}/status (shown once).
+                  statusUrl:
+                    type: string
+        "400":
+          description: Invalid signing request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: Rate limited after auth (AC2_BRIDGE_SIGN_RATE_PER_CLIENT / _PER_MIN) or per-client pending cap (AC2_BRIDGE_MAX_PENDING_PER_CLIENT)
+        "503":
+          description: Queue full (AC2_BRIDGE_MAX_PENDING); uncollected results are never evicted early
+        "401":
+          description: OperatorAuth failed (manual mode enqueue)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /requests/{id}/status:
+    get:
+      tags: [AC2Bridge]
+      summary: Requester-scoped status of a queued sign request
+      description: |
+        **Live (ac2-bridge).** For the agent that called `POST /sign` (OA-N1).
+        Auth: `X-MandateRail-Requester-Token` from the 202 (constant-time
+        compare), or loopback in TestNet `token-lab`. Returns only status, plus
+        signature/publicKey/address once approved. Unknown id and wrong token
+        both return 404. `Cache-Control: no-store`. Pending items become
+        `expired` after `AC2_BRIDGE_PENDING_TTL_MS`; finalized items (and their
+        token hashes) are evicted after `AC2_BRIDGE_RETENTION_MS`, after which
+        status is 404. Internal AI review only.
+      operationId: getRequestStatus
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+        - name: X-MandateRail-Requester-Token
+          in: header
+          required: false
+          schema: { type: string }
+      responses:
+        "200":
+          description: Request status
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [id, status]
+                properties:
+                  id: { type: string }
+                  status: { type: string, enum: [pending, approved, rejected, expired] }
+                  signature: { type: string }
+                  publicKey: { type: string }
+                  address: { type: string }
+        "401": { description: requester token required }
+        "404": { description: unknown id or token mismatch }
+
+  /approve/{id}:
+    post:
+      tags: [AC2Bridge]
+      summary: Approve pending sign request
+      description: |
+        **Live (ac2-bridge).** Body may include `{ signature, publicKey, address }`
+        from the paired device, or `useLocal` / auto-local for CI.
+
+        **Auth:** `OperatorAuth`, NOT merchant `ApiKeyAuth`. signed-challenge:
+        `X-MandateRail-Operator-Attestation` for `action=approve&id={id}`.
+        token-lab (TestNet only): `X-MandateRail-Operator-Token`; if
+        `AC2_OPERATOR_TOKEN` unset: loopback + `ALLOW_INSECURE_DEV=1` only.
+
+        See threat punchlist S2 / `docs/api/auth.md`.
+      operationId: approvePending
+      security:
+        - OperatorAuth: []
+      x-mandaterail-surface: ac2-bridge-dev
+      x-mandaterail-loopback-preferred: true
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                signature:
+                  type: string
+                  description: base64 ed25519 signature
+                publicKey:
+                  type: string
+                  description: base64 ed25519 public key
+                address:
+                  type: string
+                  description: Algorand address
+                useLocal:
+                  type: boolean
+                  description: CI only — sign with bridge-host mnemonic
+      responses:
+        "200":
+          description: Approved
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/SignatureResult"
+                  - type: object
+                    properties:
+                      id:
+                        type: string
+                      status:
+                        type: string
+                        const: approved
+        "401":
+          description: OperatorAuth failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "400":
+          description: Signature required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Item is not pending (approve/reject are final; P2-C)
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /reject/{id}:
+    post:
+      tags: [AC2Bridge]
+      summary: Reject pending sign request
+      description: |
+        **Live (ac2-bridge).**
+
+        **Auth:** `OperatorAuth`, NOT merchant `ApiKeyAuth`. signed-challenge:
+        attestation for `action=reject&id={id}`; token-lab rules as `/approve/{id}`.
+      operationId: rejectPending
+      security:
+        - OperatorAuth: []
+      x-mandaterail-surface: ac2-bridge-dev
+      x-mandaterail-loopback-preferred: true
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Rejected
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [id, status]
+                properties:
+                  id:
+                    type: string
+                  status:
+                    type: string
+                    const: rejected
+        "401":
+          description: OperatorAuth failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Item is not pending (approve/reject are final; P2-C)
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /paid/resource:
+    get:
+      tags: [MerchantIntegration]
+      summary: Example paid resource (402 flow)
+      description: |
+        **Merchant integration pattern (high level) — live on demo-api.**
+
+        1. Client `GET /paid/resource` without payment → **402 Payment Required**
+           with payment requirements (`payTo` = merchant receive address) and
+           IntentMandate hints.
+        2. Client obtains a signed IntentMandate (via AC2 bridge approve path)
+           and attaches payment + mandate materials per PROTOCOL.md.
+        3. Merchant middleware (`@mandaterail/middleware-hono`) evaluates policy
+           (amount, allowlist, expiry, revoked, signature) then calls GoPlausible
+           `/verify` → `/settle` (fail closed).
+        4. On success, demo-api persists a receipt and returns 200 + `receiptId`.
+
+        Integrators should embed MandateRail middleware in their own apps rather
+        than depending on this demo path as a hosted API.
+      operationId: getPaidResourceExample
+      responses:
+        "200":
+          description: Resource after successful settle
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  resource:
+                    type: string
+                  mandateId:
+                    type: string
+                  receiptId:
+                    type: string
+                    nullable: true
+                  explorerUrl:
+                    type: string
+                    nullable: true
+                  settle:
+                    type: object
+                    additionalProperties: true
+        "402":
+          description: Payment and mandate required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentRequiredBody"
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-MandateRail-Key
+      description: |
+        Production merchant API key. Keys are hashed at rest and scoped to a
+        merchant address; optional IP allowlist may apply.
+
+        **Prefixes (validation required):**
+        - `mr_test_` — TestNet / lab keys only
+        - `mr_live_` — MainNet keys only
+        Issuers and verifiers must reject a key whose prefix does not match the
+        configured network.
+
+        **DEV ONLY exception:** local demo servers currently accept unauthenticated
+        localhost calls — that is not a production control.
+    OperatorAuth:
+      type: apiKey
+      in: header
+      name: X-MandateRail-Operator-Attestation
+      description: |
+        Operator control-plane auth for ac2-bridge GET /pending, /approve/{id},
+        /reject/{id} and console GET/POST /mandates, GET /mandates/{id},
+        POST /mandates/{id}/revoke, POST /mandates/{id}/authorize-check —
+        NOT a merchant/agent API key.
+        **signed-challenge** (required on MainNet / ALLOW_MAINNET): base64(JSON)
+        evidence over a single-use GET /operator/challenge nonce, signed by an
+        OPERATOR_ALLOWLIST Algorand account.
+        **token-lab** (TestNet only, refused on MainNet): header
+        `X-MandateRail-Operator-Token` matching `AC2_OPERATOR_TOKEN`; if unset,
+        loopback + `ALLOW_INSECURE_DEV=1` only.
+        device / HSM / vault bindings: TODO (501).
+    HttpSignature:
+      type: http
+      scheme: signature
+      description: |
+        **Future / optional.** HTTP Message Signatures for service-to-service
+        calls. Not required for current TestNet demos.
+
+  parameters:
+    MandateId:
+      name: mandateId
+      in: path
+      required: true
+      schema:
+        type: string
+
+  schemas:
+    MandateAuthorization:
+      type: object
+      required: [status, authorizedForExecute, message]
+      properties:
+        status:
+          type: string
+          enum: [unsigned-draft, stub-signature, signature-present-unverified, signature-verified, signature-invalid, revoked, expired]
+        authorizedForExecute: { type: boolean }
+        message: { type: string }
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      additionalProperties: true
+
+    HealthStatus:
+      type: object
+      required: [ok]
+      properties:
+        ok:
+          type: boolean
+        service:
+          type: string
+        network:
+          type: string
+          description: CAIP-2 network id (e.g. Algorand TestNet)
+        merchantConfigured:
+          type: boolean
+          description: True when merchant payTo address is configured
+        merchant:
+          type: string
+          nullable: true
+          description: Receive-only payTo (demo-api may return address or null)
+        usdcAsaId:
+          type: string
+          description: USDC ASA id hint (TestNet default 10458941)
+        asset:
+          type: string
+          description: Alias used by some services for ASA id
+        priceUsdc:
+          type: string
+          description: Human-decimal price hint for demo paid resource
+        priceHints:
+          type: object
+          additionalProperties: true
+          description: Optional structured price hints (planned)
+        autoLocal:
+          type: boolean
+          description: AC2 bridge only
+        paired:
+          type: boolean
+          description: AC2 bridge only
+
+    IntentMandate:
+      type: object
+      description: IntentMandate/v1 — delegated spend authorization
+      required:
+        - id
+        - principal
+        - agent
+        - maxAmount
+        - asset
+        - allowlist
+        - expiresAt
+        - revoked
+        - nonce
+        - createdAt
+      properties:
+        id:
+          type: string
+        principal:
+          type: string
+          description: Algorand address or DID of the payer principal
+        principalPubkey:
+          type: string
+          description: Optional base64 ed25519 pubkey
+        agent:
+          type: string
+        maxAmount:
+          type: string
+          pattern: '^\d+(\.\d+)?$'
+        asset:
+          type: string
+          examples: [USDC]
+        allowlist:
+          type: array
+          items:
+            type: string
+          description: Merchant ids permitted to settle against this mandate
+        expiresAt:
+          type: string
+          format: date-time
+        revoked:
+          type: boolean
+        nonce:
+          type: string
+        signature:
+          type: string
+          nullable: true
+          description: base64 ed25519 over canonical JSON
+        createdAt:
+          type: string
+          format: date-time
+        metadata:
+          type: object
+          additionalProperties: true
+
+    IntentMandateCreate:
+      allOf:
+        - $ref: "#/components/schemas/IntentMandate"
+      description: |
+        Create body. Console-dev may persist `signature: null` as unsigned-draft
+        only (not authorized for execute). Production profile must include a
+        verified ed25519 signature (P2: further schema tightening planned).
+
+    Receipt:
+      type: object
+      required:
+        - receiptId
+        - mandateId
+        - txId
+        - network
+        - payer
+        - merchant
+        - amount
+        - asset
+        - createdAt
+        - explorerUrl
+      properties:
+        receiptId:
+          type: string
+        mandateId:
+          type: string
+        txId:
+          type: string
+        network:
+          type: string
+        payer:
+          type: string
+          description: Principal / payer address
+        merchant:
+          type: string
+          description: Receive-only payTo address (must not equal payer in prod ops)
+        amount:
+          type: string
+        asset:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        explorerUrl:
+          type: string
+          format: uri
+
+    PairStatus:
+      type: object
+      required: [paired, mode]
+      properties:
+        paired:
+          type: boolean
+        mode:
+          type: string
+          enum: [auto-local, manual, unpaired]
+
+    SigningRequest:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+        message_b64:
+          type: string
+          description: Preferred binary message (base64)
+        mandateId:
+          type: string
+        sig_hint:
+          type: string
+        display_hint:
+          type: string
+      additionalProperties: true
+
+    SignatureResult:
+      type: object
+      required: [signature]
+      properties:
+        signature:
+          type: string
+        publicKey:
+          type: string
+        address:
+          type: string
+
+    PendingApproval:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+        createdAt:
+          type: string
+          format: date-time
+        mandateId:
+          type: string
+        sig_hint:
+          type: string
+        display_hint:
+          type: string
+        message:
+          type: string
+        signature:
+          type: string
+        publicKey:
+          type: string
+        address:
+          type: string
+
+    PaymentRequiredBody:
+      type: object
+      description: High-level 402 body shape (see PROTOCOL.md for wire details)
+      properties:
+        error:
+          type: string
+          const: payment_required
+        payment:
+          type: object
+          additionalProperties: true
+        accepts:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        mandate:
+          type: object
+          additionalProperties: true

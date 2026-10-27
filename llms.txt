@@ -1,0 +1,44 @@
+# MandateRail
+
+> Policy layer for delegated spend (IntentMandate) sitting between AC2 identity/authorization and x402 payment rails. After policy passes, calls GoPlausible facilitator verify/settle. Never fakes settlement.
+
+## What it is
+
+MandateRail lets an agent (or merchant) attach IntentMandate requirements to HTTP 402 Payment Required responses, then enforce amount caps, merchant allowlists, expiry, and revocation before handing off to an x402 facilitator (GoPlausible).
+
+## Stack
+
+- TypeScript, Node 20+
+- pnpm workspaces monorepo
+- Zod schemas + JSON Schema for IntentMandate
+- Hono middleware (primary), Express stub
+- Vitest for policy engine tests
+
+## Packages
+
+- `@mandaterail/schema` — IntentMandate Zod + JSON Schema
+- `@mandaterail/core` — policy engine (amount, allowlist, expiry, revoked)
+- `@mandaterail/middleware-hono` — attach mandate extras on 402; policy → facilitator before fulfill
+- `@mandaterail/middleware-express` — thin re-export / minimal port
+- `@mandaterail/facilitator-goplausible` — fetch client for /verify and /settle (TESTNET default, fail closed)
+
+## Apps
+
+- `demo-api` — unpaid → 402 with payment + mandate extras
+- `console` — create / list / revoke mandates (JSON file store)
+
+## Docs
+
+- docs/PROTOCOL.md — IntentMandate + 402 extras wire format
+- docs/ARCHITECTURE.md — AC2 → MandateRail → GoPlausible → x402
+
+## Safety defaults
+
+- `DEV_ALLOW_UNSIGNED=false`
+- Facilitator client never fakes settle
+- AC2 verification stubbed with explicit TODOs
+
+## Do not
+
+- Do not clone or vendor GoPlausible; call its HTTP API only
+- Do not push secrets or tokens into the repo

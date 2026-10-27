@@ -1,0 +1,9 @@
+{
+  "network": "mainnet",
+  "keyVersionName": "projects/PROJECT_ID/locations/us-central1/keyRings/mr-signer/cryptoKeys/attest/cryptoKeyVersions/1",
+  "keyResource": "projects/PROJECT_ID/locations/us-central1/keyRings/mr-signer/cryptoKeys/attest/cryptoKeyVersions/1",
+  "pubkeyB64": "PINNED_32_BYTE_ED25519_PUBKEY_BASE64",
+  "protectionLevel": "SOFTWARE",
+  "serviceAccountEmail": "mr-signer@PROJECT_ID.iam.gserviceaccount.com",
+  "metadataBase": "http://169.254.169.254"
+}

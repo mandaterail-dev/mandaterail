@@ -1,0 +1,23 @@
+# rev 24 (§24.8, platform aliyun-softkey): first-boot generation of the verifier's Ed25519 key file ON the host.
+# Runs every boot: generates once (never overwrites), re-exports a missing cosign.pub, and fails closed (paging) unless
+# the key is a root:root 0600 regular file in a root 0700 dir (R67-P3-5/6). Prints only the public key.
+[Unit]
+Description=mr-verifier co-signing key generation (first boot, softkey)
+OnFailure=mr-verifier-page@%n.service
+Before=mr-verifier.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+Environment=MR_KEY_DIR=/var/lib/mr-verifier-key MR_KEY_OWNER=root
+ExecStart=/opt/mr-verifier/current/deploy/verifier/mr-verifier-keygen.sh
+PrivateNetwork=yes
+PrivateTmp=yes
+ProtectHome=yes
+ProtectSystem=strict
+ReadWritePaths=/var/lib/mr-verifier-key
+NoNewPrivileges=yes
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

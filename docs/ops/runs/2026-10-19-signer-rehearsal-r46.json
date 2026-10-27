@@ -1,0 +1,476 @@
+{
+  "startedAt": "2026-10-20T01:23:10.508Z",
+  "network": "testnet",
+  "genesis": "SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=",
+  "standIns": [
+    "audit sink: TESTNET-ONLY STAND-IN (not off-host, not Object Lock) (no B2 account in the owner's name yet)",
+    "second operator: standin-same-operator-nodely-algonode = testnet-api.algonode.cloud, which is the same operator as Nodely (no free second operator)",
+    "attestation key: SoftwareEd25519Backend TESTNET-ONLY (no YubiKey on the box)",
+    "clock: offset from algod's HTTP Date header (no chrony on the box)",
+    "presence proof: harness flag; helper clock: advanced by the harness to skip the 10-min lockout waits",
+    "dead-man ping: counted locally (no Healthchecks account yet)",
+    "DB: local PG18 test database with migrations through v12 (never ECS); TestNet quorum 1, so the 2-of-2 co-sign path is not exercised here (only in test/verifier.test.ts)"
+  ],
+  "boot": {
+    "auditHeadSeq": 1,
+    "firstHeartbeat": [
+      true
+    ],
+    "realNtfyTestPublish": true,
+    "pings": 1
+  },
+  "A1": {
+    "result": {
+      "ok": true,
+      "fromStatus": "ambiguous",
+      "msgHash": "917343fb73a86f3f90096aba03d8fb81d4037f4fb77250fc392de36adcce4b2f"
+    },
+    "txId": "XDGQUNE5J2GMERDH6DLRASP7JO2PODENSIUYK7TCEL5LP4ME7HJA",
+    "fv": 68436268,
+    "lv": 68436283,
+    "headAtBuild": 68436298,
+    "independentIndexerStatus": 404,
+    "row": {
+      "status": "released",
+      "tx_id": "XDGQUNE5J2GMERDH6DLRASP7JO2PODENSIUYK7TCEL5LP4ME7HJA",
+      "first_valid": "68436268",
+      "last_valid": "68436283"
+    },
+    "audit": [
+      {
+        "action": "attested-release",
+        "from_status": "ambiguous",
+        "to_status": "released",
+        "actor": "mr_release (label, untrusted: rehearsal)"
+      }
+    ],
+    "attestation": {
+      "body": {
+        "v": 1,
+        "txId": "XDGQUNE5J2GMERDH6DLRASP7JO2PODENSIUYK7TCEL5LP4ME7HJA",
+        "keyId": "7c76691d0d69e9377003184548680706",
+        "nonce": "gMvT0T7aSw8ezHAr02fbe-G72Oq-htq3Mr8A3DGQK7k",
+        "round": 68436300,
+        "store": "reh",
+        "expiry": "2026-10-20T01:28:16Z",
+        "sender": "ESWYAA5OX2PN5BX4KYGP5JIRUWK3TF3GB7DYWPQEUOS245Z73GAZU3OMVM",
+        "groupId": "",
+        "network": "testnet",
+        "spendId": "a1",
+        "lastValid": 68436283,
+        "firstValid": 68436268,
+        "genesisHash": "SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=",
+        "observations": [
+          {
+            "at": "2026-10-20T01:23:16Z",
+            "round": 68436300,
+            "method": "idx404",
+            "idxRound": 68436300,
+            "operator": "nodely",
+            "provider": "testnet-idx.4160.nodely.dev"
+          },
+          {
+            "at": "2026-10-20T01:23:17Z",
+            "round": 68436300,
+            "method": "blockscan",
+            "idxRound": 68436283,
+            "operator": "standin-same-operator-nodely-algonode",
+            "provider": "testnet-api.algonode.cloud"
+          }
+        ]
+      },
+      "sig": "/TabqRDfjj3U96UcxmnmXoZ+V884v6ZJWdtL5Tyonwa2bSzLFjklmfBZZvDdh1FJwqjFEtGBE0Ru\n6aP0MeZWBA=="
+    },
+    "cliPages": []
+  },
+  "A4": {
+    "rollbackBoot": {
+      "refused": true,
+      "error": "local state counters (policy 0, requests 2) are behind the off-host log (policy 1, requests 2): rolled back or wiped"
+    },
+    "noncesIn24hBefore6th": 5,
+    "syntheticNonceRows": 4,
+    "sixth": {
+      "refused": true,
+      "error": "mr_spend_release_attested: limit of 5 attested releases per 24 h reached"
+    },
+    "rowAfter": {
+      "status": "ambiguous"
+    }
+  },
+  "A2": {
+    "signer.forged": "signer HTTP 403 refused",
+    "signer.replayed": "signer HTTP 403 refused",
+    "signer.stale": "signer HTTP 403 refused",
+    "helper.forged": "helper refused: confirm: request signature",
+    "helper.replayed": "helper refused: confirm: request nonce replay",
+    "helper.stale": "helper refused: confirm: request timestamp outside the window",
+    "helper.afterThreeMisses": "helper refused: locked",
+    "helperStatus": {
+      "locked": true,
+      "hard": false
+    },
+    "signerPaused": null
+  },
+  "A6": {
+    "hardStatus": {
+      "locked": true,
+      "hard": true
+    },
+    "refusedWhileHard": "helper refused: hard-locked",
+    "unlockWithoutPresence": "unlock: no physical-presence proof",
+    "unlockWithPresence": "UNLOCKED",
+    "statusAfter": {
+      "locked": false,
+      "hard": false
+    },
+    "signAfterUnlock": {
+      "signedEventLogged": true,
+      "dbOutcome": "mr_spend_release_attested: limit of 5 attested releases per 24 h reached"
+    }
+  },
+  "A5": {
+    "heartbeatsWithUnreachablePager": [
+      false
+    ],
+    "pingsDuringOutage": 0,
+    "release": "signer HTTP 403 refused",
+    "signerPaused": {
+      "at": 1792459420819,
+      "reason": "manual: page failed (signed)"
+    },
+    "a5AuditKinds": [
+      "candidate",
+      "signed",
+      "refusal"
+    ],
+    "rowAfter": {
+      "status": "ambiguous"
+    },
+    "realTestPublish": "delivered (HTTP 200)"
+  },
+  "helperAnchorAcrossRestarts": [
+    {
+      "seq": 1,
+      "counters": {
+        "policy": 0,
+        "requests": 0
+      }
+    },
+    {
+      "seq": 4,
+      "counters": {
+        "policy": 1,
+        "requests": 2,
+        "helper": 1
+      }
+    },
+    {
+      "seq": 12,
+      "counters": {
+        "policy": 6,
+        "requests": 6,
+        "helper": 13
+      }
+    }
+  ],
+  "auditLogA7": [
+    {
+      "seq": 1,
+      "kind": "boot",
+      "at": 1792459421270,
+      "counters": {
+        "policy": 0,
+        "requests": 0
+      },
+      "prev": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "seq": 2,
+      "kind": "refusal-anomaly",
+      "spendKey": "reh7/a7",
+      "reason": "provider testnet-idx.4160.nodely.dev (nodely) shows the transaction present",
+      "at": 1792459425426,
+      "counters": {
+        "policy": 1,
+        "requests": 1
+      },
+      "prev": "943f93ab6514ccc819c08a3168b3926ba05ca6c63525baa2ce5c99eadae125ec"
+    }
+  ],
+  "A7": {
+    "txId": "64UOAJY5ZD6AL63WOMHZDCJ2VJCF4FTURMPAV6TA2R5GQRSNZARQ",
+    "confirmedRound": 48960137,
+    "fv": 48960135,
+    "lv": 48961135,
+    "roundTime": "2025-02-22T07:20:31.000Z",
+    "rebuiltTxIdMatches": true,
+    "release": "signer HTTP 403 refused",
+    "probes": {
+      "indexer": {
+        "kind": "present",
+        "genesis": "SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI="
+      },
+      "algodBlockscan": {
+        "kind": "present",
+        "genesis": "SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI="
+      }
+    },
+    "signerPaused": {
+      "at": 1792459425422,
+      "reason": "anomaly: provider testnet-idx.4160.nodely.dev (nodely) shows the transaction present"
+    },
+    "auditKinds": [
+      "boot",
+      "refusal-anomaly: provider testnet-idx.4160.nodely.dev (nodely) shows the transaction present"
+    ],
+    "rowAfter": {
+      "status": "ambiguous"
+    },
+    "limits": "third-party payment (our own submitted payment is A7-own); submit_round = lv-1 as in A1 (the real submit predates the row)",
+    "limitsCorrected": "R47-P3: corrected after the run; the original text said no funded TestNet account, which was wrong"
+  },
+  "auditLogA7own": [
+    {
+      "seq": 1,
+      "kind": "boot",
+      "at": 1792459493878,
+      "counters": {
+        "policy": 0,
+        "requests": 0
+      },
+      "prev": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "seq": 2,
+      "kind": "refusal-anomaly",
+      "spendKey": "reh8/a7own",
+      "reason": "provider testnet-idx.4160.nodely.dev (nodely) shows the transaction present",
+      "at": 1792459494479,
+      "counters": {
+        "policy": 1,
+        "requests": 1
+      },
+      "prev": "e61675633ade0e37083ae0dcb934b59ed59e268e622edb3d63db795e52594bec"
+    }
+  ],
+  "A7own": {
+    "txId": "CRF3BV5ENWSYQTMKHW3N6DRFUZECPX4ZPEPEAX5JOJU2NHLKMFQA",
+    "payer": "FLJXFD7MTRJCDVANCA55C4DNHHWE4VTH6WKT4SCFWNYPW56OOFW356RGME",
+    "merchant": "SK7X44DFL4C35E7WEF577RJWHVAM3FF5QISKRESK6VCA7Y56GNJEHWBIRI",
+    "amountMicroUsdc": 1000,
+    "fv": 68436311,
+    "lv": 68436323,
+    "submitRoundStored": 68436311,
+    "submittedAt": "2026-10-20T01:23:46.357Z",
+    "submitHttp": 200,
+    "confirmedRound": 68436313,
+    "release": "signer HTTP 403 refused",
+    "probes": {
+      "indexer": {
+        "kind": "present",
+        "genesis": "SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI="
+      },
+      "algodBlockscan": {
+        "kind": "present",
+        "genesis": "SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI="
+      }
+    },
+    "signerPaused": {
+      "at": 1792459494477,
+      "reason": "anomaly: provider testnet-idx.4160.nodely.dev (nodely) shows the transaction present"
+    },
+    "rowAfter": {
+      "status": "ambiguous",
+      "submit_round": "68436311"
+    },
+    "limits": "confirmed case only: public TestNet confirms a valid submitted txn within a round, so a submitted-then-expired txn cannot be forced honestly (the never-submitted expiry is A1)"
+  },
+  "finishedAt": "2026-10-20T01:24:55.181Z",
+  "auditLog": [
+    {
+      "seq": 1,
+      "kind": "boot",
+      "at": 1792459390880,
+      "counters": {
+        "policy": 0,
+        "requests": 0
+      },
+      "prev": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "seq": 2,
+      "kind": "candidate",
+      "spendKey": "reh/a1",
+      "msgHash": "917343fb73a86f3f90096aba03d8fb81d4037f4fb77250fc392de36adcce4b2f",
+      "at": 1792459396140,
+      "counters": {
+        "policy": 0,
+        "requests": 1
+      },
+      "prev": "fe792ed4d3b5a05115d662a21865285fd86112e9739a2d6e23b73988c54c327b"
+    },
+    {
+      "seq": 3,
+      "kind": "signed",
+      "spendKey": "reh/a1",
+      "msgHash": "917343fb73a86f3f90096aba03d8fb81d4037f4fb77250fc392de36adcce4b2f",
+      "at": 1792459397908,
+      "counters": {
+        "policy": 1,
+        "requests": 2,
+        "helper": 1
+      },
+      "prev": "9572ae458b70c68d56f43b8eb9144262c33bdb78e3469a5f7d576107fb24f609"
+    },
+    {
+      "seq": 4,
+      "kind": "boot",
+      "at": 1792459398277,
+      "counters": {
+        "policy": 1,
+        "requests": 2,
+        "helper": 1
+      },
+      "prev": "4266642711e2d616748079266eb73afe3d54fdb6778c2ccee4ce89265a4b644c"
+    },
+    {
+      "seq": 5,
+      "kind": "candidate",
+      "spendKey": "reh/a4",
+      "msgHash": "a1c43c6d2ac9564d7d74bc70fcb65cf4d76003f305ba7b16effaaa038baf297d",
+      "at": 1792459402045,
+      "counters": {
+        "policy": 1,
+        "requests": 3,
+        "helper": 1
+      },
+      "prev": "f24c24c0a0ca8cb65ff5b1e27c9f8cfa74c180d018721ad22a7939956675925a"
+    },
+    {
+      "seq": 6,
+      "kind": "signed",
+      "spendKey": "reh/a4",
+      "msgHash": "a1c43c6d2ac9564d7d74bc70fcb65cf4d76003f305ba7b16effaaa038baf297d",
+      "at": 1792459403876,
+      "counters": {
+        "policy": 2,
+        "requests": 4,
+        "helper": 2
+      },
+      "prev": "4216c0820b2734bace3b5447e20e53170a89aae4173e8122432602cddc5a04f9"
+    },
+    {
+      "seq": 7,
+      "kind": "refusal",
+      "reason": "request signature",
+      "at": 1792459407826,
+      "counters": {
+        "policy": 3,
+        "requests": 4,
+        "helper": 2
+      },
+      "prev": "5a0871ab2d2c17ab888b2e9da2ea91e7ed6fc2f64509d102473994e4a2e9553e"
+    },
+    {
+      "seq": 8,
+      "kind": "refusal",
+      "reason": "request nonce replay",
+      "at": 1792459407841,
+      "counters": {
+        "policy": 4,
+        "requests": 4,
+        "helper": 2
+      },
+      "prev": "8acbe7e91ab71345909c884678a54daa4e0cc85e3d6979cb469ded253e12860d"
+    },
+    {
+      "seq": 9,
+      "kind": "refusal",
+      "reason": "request timestamp outside the window",
+      "at": 1792459407853,
+      "counters": {
+        "policy": 5,
+        "requests": 4,
+        "helper": 2
+      },
+      "prev": "6ff4464cc521c669f8e13bd19ed64785b1777944298280f5ceada7a363c5ffb8"
+    },
+    {
+      "seq": 10,
+      "kind": "candidate",
+      "spendKey": "reh/a6",
+      "msgHash": "8ea69abf19da508fb4cee288b959d0140931db613701673b0df057a67f7128ce",
+      "at": 1792459411586,
+      "counters": {
+        "policy": 5,
+        "requests": 5,
+        "helper": 2
+      },
+      "prev": "03fea9e5081e6399e198a9ee9d21657ef74105e68679342fc191c80637678916"
+    },
+    {
+      "seq": 11,
+      "kind": "signed",
+      "spendKey": "reh/a6",
+      "msgHash": "8ea69abf19da508fb4cee288b959d0140931db613701673b0df057a67f7128ce",
+      "at": 1792459413612,
+      "counters": {
+        "policy": 6,
+        "requests": 6,
+        "helper": 13
+      },
+      "prev": "1aad06f7348968e32a3aa2866302f5353655ae74e4515149e7ba70c906ab641e"
+    },
+    {
+      "seq": 12,
+      "kind": "boot",
+      "at": 1792459413918,
+      "counters": {
+        "policy": 6,
+        "requests": 6,
+        "helper": 13
+      },
+      "prev": "32ea59329811276909e36821141df0a9652357f95ae99088046356f7b12b1666"
+    },
+    {
+      "seq": 13,
+      "kind": "candidate",
+      "spendKey": "reh/a5",
+      "msgHash": "c4321f279138835d6d25b3996f991c7e319e461753c4de599a966aea3a559fce",
+      "at": 1792459419065,
+      "counters": {
+        "policy": 6,
+        "requests": 7,
+        "helper": 13
+      },
+      "prev": "8e85841c9caf760eee9d8f55db1b18ac6b594f50ec11feefdc765888bd4180ab"
+    },
+    {
+      "seq": 14,
+      "kind": "signed",
+      "spendKey": "reh/a5",
+      "msgHash": "c4321f279138835d6d25b3996f991c7e319e461753c4de599a966aea3a559fce",
+      "at": 1792459420817,
+      "counters": {
+        "policy": 7,
+        "requests": 8,
+        "helper": 14
+      },
+      "prev": "fd205ff66931cb55545e836e8e766f6407232084812ffd46dca7f55bfd354c59"
+    },
+    {
+      "seq": 15,
+      "kind": "refusal",
+      "spendKey": "reh/a5",
+      "reason": "page failed for signed: ntfy publish failed: fetch failed",
+      "at": 1792459420820,
+      "counters": {
+        "policy": 9,
+        "requests": 8,
+        "helper": 14
+      },
+      "prev": "ac4c7a70d8e69ad4a6dc0406ae1bc33bf56376aabc7c4facd9eaaf3fd0c20f73"
+    }
+  ]
+}

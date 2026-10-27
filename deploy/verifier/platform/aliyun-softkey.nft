@@ -1,0 +1,5 @@
+# aliyun-softkey (rev 24 §24.8): verifier on Alibaba ECS, co-signing key = a host-generated Ed25519 FILE (systemd
+# LoadCredential). No KMS anywhere, so KMS_VPCE matches nothing (127.0.0.2); IMDS is Alibaba's (kept for the
+# per-uid rule + the deny log; the softkey verifier itself needs no role credentials).
+define IMDS = 100.100.100.200
+define KMS_VPCE = { 127.0.0.2 }

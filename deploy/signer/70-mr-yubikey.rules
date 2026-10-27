@@ -1,0 +1,3 @@
+# R44-P3: the signer's YubiKey only, pinned by serial (replace PINNED_SERIAL at install).
+# mr-piv-sign@.service allows /dev/mr-yubikey and nothing else (DevicePolicy=closed).
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1050", ATTRS{serial}=="PINNED_SERIAL", SYMLINK+="mr-yubikey", OWNER="mr-piv", GROUP="mr-piv", MODE="0600", TAG+="systemd"

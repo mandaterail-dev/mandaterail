@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MandateRail · Brand Manual · Version 1.0</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon-rail-check.svg" />
+  <style>
+    :root {
+      --accent: #2B5EA7;
+      --accent-hover: #244f8f;
+      --ink: #0F1419;
+      --paper: #F4F6F8;
+      --white: #FFFFFF;
+      --muted: #64748B;
+      --muted-light: #94A3B8;
+      --border: #E2E8F0;
+      --slate-100: #F1F5F9;
+      --slate-200: #E2E8F0;
+      --slate-500: #64748B;
+      --slate-700: #334155;
+      --success: #059669;
+      --success-bg: #ECFDF5;
+      --deny: #E11D48;
+      --deny-bg: #FFF1F2;
+      --amber: #92400E;
+      --amber-bg: #FFFBEB;
+      --page-max: 860px;
+      --rail: 1px solid var(--border);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* —— Cover —— */
+    .cover {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 3.5rem 4rem;
+      background: var(--ink);
+      color: var(--paper);
+      page-break-after: always;
+    }
+    .cover-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted-light);
+    }
+    .cover-mark {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 2.5rem;
+      padding: 4rem 0;
+    }
+    .cover-mark img.mark {
+      width: 96px;
+      height: 96px;
+    }
+    .cover-mark img.wordmark {
+      width: min(420px, 80vw);
+      height: auto;
+    }
+    .cover h1 {
+      font-size: clamp(2.5rem, 6vw, 3.75rem);
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+    }
+    .cover .subtitle {
+      font-size: 1.125rem;
+      color: var(--muted-light);
+      font-weight: 400;
+      letter-spacing: 0.02em;
+    }
+    .cover-meta {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      border-top: 1px solid rgba(244,246,248,0.15);
+      padding-top: 1.75rem;
+      font-size: 0.8125rem;
+    }
+    .cover-meta dt {
+      color: var(--muted-light);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.6875rem;
+      margin-bottom: 0.35rem;
+    }
+    .cover-meta dd { color: var(--paper); font-weight: 500; }
+
+    /* —— Layout —— */
+    .page {
+      max-width: var(--page-max);
+      margin: 0 auto;
+      padding: 3.5rem 2rem 4rem;
+    }
+
+    nav.toc {
+      background: var(--white);
+      border: var(--rail);
+      border-radius: 8px;
+      padding: 1.75rem 2rem;
+      margin-bottom: 3.5rem;
+    }
+    nav.toc h2 {
+      font-size: 0.6875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+    nav.toc ol {
+      list-style: none;
+      counter-reset: toc;
+      display: grid;
+      gap: 0.45rem;
+    }
+    nav.toc li {
+      counter-increment: toc;
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+    }
+    nav.toc li::before {
+      content: counter(toc, decimal-leading-zero);
+      font-size: 0.75rem;
+      color: var(--accent);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      min-width: 1.5rem;
+    }
+    nav.toc a {
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 0.9375rem;
+      border-bottom: 1px solid transparent;
+    }
+    nav.toc a:hover { border-bottom-color: var(--accent); color: var(--accent); }
+
+    section {
+      margin-bottom: 4rem;
+      page-break-inside: avoid;
+    }
+    section > header {
+      margin-bottom: 1.75rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--ink);
+    }
+    .sec-num {
+      display: block;
+      font-size: 0.6875rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+    section h2 {
+      font-size: 1.625rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+    }
+    section h3 {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      margin: 1.75rem 0 0.75rem;
+      letter-spacing: -0.01em;
+    }
+    p { margin-bottom: 1rem; color: var(--slate-700); font-size: 0.9375rem; }
+    p.lead {
+      font-size: 1.0625rem;
+      color: var(--ink);
+      line-height: 1.65;
+      max-width: 62ch;
+    }
+    .note {
+      font-size: 0.8125rem;
+      color: var(--muted);
+      border-left: 3px solid var(--accent);
+      padding-left: 0.875rem;
+      margin: 1.25rem 0;
+    }
+    strong { color: var(--ink); font-weight: 600; }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.8125em;
+      background: var(--slate-100);
+      padding: 0.1em 0.35em;
+      border-radius: 3px;
+      color: var(--ink);
+    }
+
+    /* —— Cards / swatches —— */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.875rem;
+    }
+    @media (max-width: 640px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .cover { padding: 2rem 1.5rem; }
+      .cover-meta { grid-template-columns: 1fr 1fr; }
+    }
+
+    .card {
+      background: var(--white);
+      border: var(--rail);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .card-body { padding: 1.25rem 1.35rem; }
+    .card-label {
+      font-size: 0.6875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+    .card-title {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .card-meta {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.35rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .preview-light {
+      background: var(--paper);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 140px;
+      padding: 1.5rem;
+      border-bottom: var(--rail);
+    }
+    .preview-dark {
+      background: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 140px;
+      padding: 1.5rem;
+      border-bottom: var(--rail);
+    }
+    .preview-light img.mark, .preview-dark img.mark { width: 72px; height: 72px; }
+    .preview-light img.wordmark, .preview-dark img.wordmark { width: 260px; height: auto; }
+    .preview-light img.favicon, .preview-dark img.favicon { width: 32px; height: 32px; }
+
+    /* —— Color —— */
+    .swatch {
+      border-radius: 8px;
+      overflow: hidden;
+      border: var(--rail);
+      background: var(--white);
+    }
+    .swatch-chip {
+      height: 88px;
+      width: 100%;
+    }
+    .swatch-info { padding: 0.875rem 1rem 1rem; }
+    .swatch-name { font-weight: 600; font-size: 0.875rem; }
+    .swatch-hex {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+    }
+    .swatch-use {
+      font-size: 0.75rem;
+      color: var(--slate-700);
+      margin-top: 0.5rem;
+      line-height: 1.4;
+    }
+
+    /* —— Clear space —— */
+    .clearspace {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2.5rem;
+      background: var(--white);
+      border: var(--rail);
+      border-radius: 8px;
+      position: relative;
+    }
+    .clearspace-inner {
+      position: relative;
+      display: inline-block;
+    }
+    .clearspace-inner img { width: 80px; height: 80px; display: block; }
+    .clearspace-guide {
+      position: absolute;
+      inset: -20px; /* ≈ height of rail bar relative to 80px mark (rail ~5/64 * 80 ≈ 6.25; use visual bar height) */
+      border: 1px dashed var(--accent);
+      border-radius: 4px;
+      pointer-events: none;
+    }
+    /* Rail bar height on 64 viewBox is 5 units; at 80px → ~6.25px. Spec says clear space = height of rail bar.
+       For readable illustration we show a clearer margin equal to one rail-bar height scaled up for diagram clarity,
+       annotated as “1× rail-bar height”. Use ~12.5% of mark (5/64≈7.8%) — we'll annotate truthfully. */
+    .clearspace-guide {
+      /* 5/64 of 80px ≈ 6.25px — too tight to see; diagram uses 1× rail bar with label */
+      inset: calc(-1 * (80px * 5 / 64));
+    }
+    .clearspace-caption {
+      text-align: center;
+      font-size: 0.8125rem;
+      color: var(--muted);
+      margin-top: 0.75rem;
+    }
+
+    /* —— Spec table —— */
+    table.spec {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+      background: var(--white);
+      border: var(--rail);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    table.spec th, table.spec td {
+      text-align: left;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    table.spec th {
+      background: var(--slate-100);
+      font-size: 0.6875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    table.spec tr:last-child td { border-bottom: none; }
+    table.spec td:first-child { font-weight: 500; color: var(--ink); }
+
+    /* —— Don'ts —— */
+    .dont-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 640px) { .dont-grid { grid-template-columns: 1fr; } }
+    .dont {
+      background: var(--white);
+      border: var(--rail);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .dont-visual {
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--paper);
+      position: relative;
+      overflow: hidden;
+    }
+    .dont-visual::after {
+      content: "✕";
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--deny);
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+    .dont-body { padding: 0.875rem 1rem 1.1rem; }
+    .dont-body strong {
+      display: block;
+      font-size: 0.8125rem;
+      margin-bottom: 0.25rem;
+    }
+    .dont-body span {
+      font-size: 0.75rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    /* Fake incorrect uses via CSS transforms on real mark */
+    .bad-stretch img { width: 110px; height: 48px; }
+    .bad-recolor img { filter: hue-rotate(120deg) saturate(2); width: 64px; height: 64px; }
+    .bad-neon {
+      background: #0a0a12 !important;
+    }
+    .bad-neon img {
+      width: 64px; height: 64px;
+      filter: drop-shadow(0 0 8px #00ff88) drop-shadow(0 0 16px #00ff88);
+    }
+    .bad-shadow img {
+      width: 64px; height: 64px;
+      filter: drop-shadow(4px 6px 4px rgba(0,0,0,0.45));
+    }
+    .bad-rotate img {
+      width: 64px; height: 64px;
+      transform: rotate(18deg);
+    }
+    .bad-separate {
+      gap: 1.5rem;
+    }
+    .bad-separate .part {
+      width: 28px; height: 28px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+    .bad-emoji {
+      font-size: 2.5rem;
+      line-height: 1;
+    }
+
+    /* —— Application —— */
+    .mock-topbar {
+      background: var(--white);
+      border: var(--rail);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .mock-topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      gap: 1rem;
+    }
+    .mock-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem; /* TestNet badge spacing */
+    }
+    .mock-brand img { height: 32px; width: auto; }
+    .mock-badge {
+      border-radius: 999px;
+      background: var(--amber-bg);
+      color: var(--amber);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.15rem 0.625rem;
+      box-shadow: inset 0 0 0 1px #FDE68A;
+    }
+    .mock-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .mock-caption {
+      padding: 0.75rem 1rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+      background: var(--slate-100);
+    }
+
+    .avatar-row {
+      display: flex;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+    .avatar {
+      text-align: center;
+    }
+    .avatar-box {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      background: var(--paper);
+      border: var(--rail);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.5rem;
+    }
+    .avatar-box.dark { background: var(--ink); }
+    .avatar-box img { width: 40px; height: 40px; }
+    .avatar-box.sm { width: 32px; height: 32px; border-radius: 6px; }
+    .avatar-box.sm img { width: 20px; height: 20px; }
+    .avatar span {
+      font-size: 0.6875rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* —— Type —— */
+    .type-specimen {
+      background: var(--white);
+      border: var(--rail);
+      border-radius: 8px;
+      padding: 1.5rem 1.75rem;
+    }
+    .type-specimen .xxl {
+      font-size: 2.25rem;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 0.5rem;
+    }
+    .type-specimen .xl {
+      font-size: 1.25rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+    }
+    .type-specimen .body {
+      font-size: 0.9375rem;
+      font-weight: 400;
+      color: var(--slate-700);
+      margin-bottom: 0.75rem;
+    }
+    .type-specimen .caption {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .type-specimen .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.8125rem;
+      color: var(--ink);
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* —— Voice —— */
+    .voice-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 640px) { .voice-pair { grid-template-columns: 1fr; } }
+    .voice-do, .voice-dont {
+      border-radius: 8px;
+      padding: 1.25rem 1.35rem;
+      border: var(--rail);
+    }
+    .voice-do { background: var(--success-bg); border-color: #A7F3D0; }
+    .voice-dont { background: var(--deny-bg); border-color: #FECDD3; }
+    .voice-do h4, .voice-dont h4 {
+      font-size: 0.6875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.75rem;
+    }
+    .voice-do h4 { color: var(--success); }
+    .voice-dont h4 { color: var(--deny); }
+    .voice-do p, .voice-dont p {
+      font-size: 0.875rem;
+      color: var(--ink);
+      margin: 0;
+      font-style: italic;
+    }
+
+    /* —— Asset list —— */
+    ul.assets {
+      list-style: none;
+      background: var(--white);
+      border: var(--rail);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    ul.assets li {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8125rem;
+    }
+    ul.assets li:last-child { border-bottom: none; }
+    ul.assets .file {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      color: var(--ink);
+      font-weight: 500;
+    }
+    ul.assets .desc { color: var(--muted); text-align: right; }
+
+    footer.manual-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: var(--rail);
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    footer.manual-footer a { color: var(--accent); text-decoration: none; }
+
+    /* Print */
+    @media print {
+      body { background: white; }
+      .cover { min-height: 100vh; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .page { max-width: none; padding: 1.5cm 1.5cm; }
+      nav.toc { break-after: page; }
+      section { break-inside: avoid; }
+      a { color: inherit; text-decoration: none; }
+      .swatch-chip, .preview-dark, .preview-light, .dont-visual, .mock-btn, .mock-badge {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===================== COVER ===================== -->
+  <header class="cover">
+    <div class="cover-top">
+      <span>MandateRail</span>
+      <span>Brand System</span>
+    </div>
+    <div class="cover-mark">
+      <img class="mark" src="./mark-rail-check.svg" alt="MandateRail rail-check mark" />
+      <div>
+        <h1>Brand Manual</h1>
+        <p class="subtitle" style="margin-top:0.75rem;margin-bottom:0">rail-check direction · locked</p>
+      </div>
+    </div>
+    <dl class="cover-meta">
+      <div>
+        <dt>Version</dt>
+        <dd>1.0</dd>
+      </div>
+      <div>
+        <dt>Date</dt>
+        <dd>September 2026</dd>
+      </div>
+      <div>
+        <dt>License</dt>
+        <dd>Apache-2.0</dd>
+      </div>
+    </dl>
+  </header>
+
+  <main class="page">
+
+    <nav class="toc" aria-label="Contents">
+      <h2>Contents</h2>
+      <ol>
+        <li><a href="#idea">Brand idea</a></li>
+        <li><a href="#name">Name lockup</a></li>
+        <li><a href="#logo">Logo system</a></li>
+        <li><a href="#color">Color palette</a></li>
+        <li><a href="#type">Typography</a></li>
+        <li><a href="#incorrect">Incorrect use</a></li>
+        <li><a href="#application">Application</a></li>
+        <li><a href="#voice">Voice</a></li>
+        <li><a href="#assets">Asset file list</a></li>
+      </ol>
+    </nav>
+
+    <!-- ===================== 01 BRAND IDEA ===================== -->
+    <section id="idea">
+      <header>
+        <span class="sec-num">01</span>
+        <h2>Brand idea</h2>
+      </header>
+      <p class="lead">
+        MandateRail is an open-source policy-gated settlement rail for Algorand agentic commerce:
+        human-approved agent payments with institutional trust. The brand should feel like Folks Finance
+        or the Algorand Foundation—calm infrastructure, not a casino DEX.
+      </p>
+      <p class="note">
+        Direction locked: <strong>rail-check</strong> (two parallel rails + check notch). Alternate marks
+        (mandate-seal, policy-gate, signed-ticket) are archived for reference only.
+      </p>
+    </section>
+
+    <!-- ===================== 02 NAME ===================== -->
+    <section id="name">
+      <header>
+        <span class="sec-num">02</span>
+        <h2>Name lockup</h2>
+      </header>
+      <div class="grid-2">
+        <div class="card">
+          <div class="preview-light">
+            <img class="wordmark" src="./wordmark-rail-check-light.svg" alt="MandateRail wordmark light" />
+          </div>
+          <div class="card-body">
+            <div class="card-label">Primary</div>
+            <div class="card-title">MandateRail</div>
+            <div class="card-meta">One word · always in logos &amp; UI</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="preview-light" style="flex-direction:column;gap:0.5rem;align-items:flex-start">
+            <span style="font-size:1.25rem;font-weight:600;letter-spacing:-0.02em;color:var(--ink)">Mandate Rail</span>
+            <span style="font-size:0.75rem;color:var(--muted)">Prose / long-form only</span>
+          </div>
+          <div class="card-body">
+            <div class="card-label">Optional (prose)</div>
+            <div class="card-title">Mandate Rail</div>
+            <div class="card-meta">Spaced · never as a logo</div>
+          </div>
+        </div>
+      </div>
+      <p style="margin-top:1.25rem">
+        Use <strong>MandateRail</strong> (one word, camel-case M and R) in product UI, logos, domain copy,
+        and repository names. The spaced form <strong>Mandate Rail</strong> may appear in running prose
+        or narrative docs for readability—never in the wordmark, favicon, or social avatar.
+      </p>
+    </section>
+
+    <!-- ===================== 03 LOGO ===================== -->
+    <section id="logo">
+      <header>
+        <span class="sec-num">03</span>
+        <h2>Logo system</h2>
+      </header>
+      <p>
+        The primary mark is <strong>rail-check</strong>: two parallel horizontal rails joined by a vertical
+        tie, with a subtle check notch on the upper right. Accent paint only—no gradients, no neon.
+      </p>
+
+      <h3>Primary mark</h3>
+      <div class="grid-2">
+        <div class="card">
+          <div class="preview-light">
+            <img class="mark" src="./mark-rail-check.svg" alt="rail-check mark on paper" />
+          </div>
+          <div class="card-body">
+            <div class="card-label">On paper</div>
+            <div class="card-title">mark-rail-check.svg</div>
+            <div class="card-meta">64×64 viewBox · #2B5EA7</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="preview-dark">
+            <img class="mark" src="./mark-rail-check.svg" alt="rail-check mark on ink" />
+          </div>
+          <div class="card-body">
+            <div class="card-label">On ink</div>
+            <div class="card-title">Same SVG · accent holds</div>
+            <div class="card-meta">Do not invert the mark to white</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Wordmark</h3>
+      <div class="grid-2">
+        <div class="card">
+          <div class="preview-light">
+            <img class="wordmark" src="./wordmark-rail-check-light.svg" alt="Wordmark light" />
+          </div>
+          <div class="card-body">
+            <div class="card-label">Light surfaces</div>
+            <div class="card-title">wordmark-rail-check-light.svg</div>
+            <div class="card-meta">Mark + ink (#0F1419) type</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="preview-dark">
+            <img class="wordmark" src="./wordmark-rail-check-dark.svg" alt="Wordmark dark" />
+          </div>
+          <div class="card-body">
+            <div class="card-label">Dark surfaces</div>
+            <div class="card-title">wordmark-rail-check-dark.svg</div>
+            <div class="card-meta">Mark + paper (#F4F6F8) type</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Favicon</h3>
+      <div class="grid-2">
+        <div class="card">
+          <div class="preview-light">
+            <img class="favicon" src="./favicon-rail-check.svg" alt="Favicon" width="32" height="32" />
+          </div>
+          <div class="card-body">
+            <div class="card-label">16–32px</div>
+            <div class="card-title">favicon-rail-check.svg</div>
+            <div class="card-meta">Also shipped as /favicon.svg</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="preview-light" style="gap:1.5rem">
+            <img src="./favicon-rail-check.svg" alt="" width="32" height="32" />
+            <img src="./favicon-rail-check.svg" alt="" width="24" height="24" />
+            <img src="./favicon-rail-check.svg" alt="" width="16" height="16" />
+          </div>
+          <div class="card-body">
+            <div class="card-label">Scale test</div>
+            <div class="card-title">32 · 24 · 16 px</div>
+            <div class="card-meta">Stroke ≥ 2.5px at source</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Clear space</h3>
+      <div class="clearspace">
+        <div class="clearspace-inner">
+          <div class="clearspace-guide" aria-hidden="true"></div>
+          <img src="./mark-rail-check.svg" alt="Clear space demonstration" />
+        </div>
+      </div>
+      <p class="clearspace-caption">
+        Minimum clear space = <strong>height of one rail bar</strong> on all sides.
+        Keep competing UI (TestNet badge, nav links) outside this margin.
+      </p>
+
+      <h3>Minimum sizes</h3>
+      <table class="spec">
+        <thead>
+          <tr>
+            <th>Asset</th>
+            <th>Digital</th>
+            <th>Print</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Primary mark</td>
+            <td>≥ 24 px tall</td>
+            <td>≥ 8 mm tall</td>
+          </tr>
+          <tr>
+            <td>Wordmark</td>
+            <td>≥ 120 px wide</td>
+            <td>≥ 30 mm wide</td>
+          </tr>
+          <tr>
+            <td>Favicon</td>
+            <td>16–32 px (as provided)</td>
+            <td>—</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ===================== 04 COLOR ===================== -->
+    <section id="color">
+      <header>
+        <span class="sec-num">04</span>
+        <h2>Color palette</h2>
+      </header>
+      <p>
+        Three brand anchors plus supporting neutrals and console status colors.
+        Prefer accent for primary actions and mark paint; ink/paper for surfaces and type.
+      </p>
+      <div class="grid-3" style="margin-top:1.25rem">
+        <div class="swatch">
+          <div class="swatch-chip" style="background:#2B5EA7"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Accent</div>
+            <div class="swatch-hex">#2B5EA7</div>
+            <div class="swatch-use">Primary CTA, mark fill/stroke, links. Hover: #244F8F.</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-chip" style="background:#0F1419"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Ink</div>
+            <div class="swatch-hex">#0F1419</div>
+            <div class="swatch-use">Body text, light wordmark type, dark surfaces.</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-chip" style="background:#F4F6F8;border-bottom:1px solid var(--border)"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Paper</div>
+            <div class="swatch-hex">#F4F6F8</div>
+            <div class="swatch-use">Page background, dark wordmark type, quiet panels.</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Supporting neutrals</h3>
+      <div class="grid-4">
+        <div class="swatch">
+          <div class="swatch-chip" style="background:#FFFFFF;border-bottom:1px solid var(--border)"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">White</div>
+            <div class="swatch-hex">#FFFFFF</div>
+            <div class="swatch-use">Cards, top bar</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-chip" style="background:#E2E8F0"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Border</div>
+            <div class="swatch-hex">#E2E8F0</div>
+            <div class="swatch-use">Hairlines, rings</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-chip" style="background:#64748B"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Muted</div>
+            <div class="swatch-hex">#64748B</div>
+            <div class="swatch-use">Secondary labels</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-chip" style="background:#334155"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Slate</div>
+            <div class="swatch-hex">#334155</div>
+            <div class="swatch-use">Secondary body</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Console status</h3>
+      <div class="grid-3">
+        <div class="swatch">
+          <div class="swatch-chip" style="background:#059669"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Success / allow</div>
+            <div class="swatch-hex">#059669 · bg #ECFDF5</div>
+            <div class="swatch-use">Healthy bridge, active mandate.</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-chip" style="background:#E11D48"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Deny / error</div>
+            <div class="swatch-hex">#E11D48 · bg #FFF1F2</div>
+            <div class="swatch-use">Failed status, destructive emphasis.</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-chip" style="background:#F59E0B"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">TestNet badge</div>
+            <div class="swatch-hex">Amber · #FFFBEB / #92400E</div>
+            <div class="swatch-use">Network environment chip only.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 05 TYPE ===================== -->
+    <section id="type">
+      <header>
+        <span class="sec-num">05</span>
+        <h2>Typography</h2>
+      </header>
+      <p>
+        Match the console: a system UI stack (Inter may be loaded later; until then prefer the native stack).
+        Docs and this manual use the same family for continuity.
+      </p>
+      <div class="type-specimen">
+        <div class="xxl">MandateRail</div>
+        <div class="xl">Policy-gated settlement</div>
+        <div class="body">
+          Human-approved agent payments on Algorand. Precise language, short sentences,
+          no hype. Prefer “approve mandate” over “unleash agents.”
+        </div>
+        <div class="caption">Section label · 12px · medium · tracked</div>
+        <div class="mono">ui-monospace · addresses · IDs · hex · CLI</div>
+      </div>
+
+      <table class="spec" style="margin-top:1.25rem">
+        <thead>
+          <tr>
+            <th>Context</th>
+            <th>Stack</th>
+            <th>Weights</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Console UI</td>
+            <td><code>ui-sans-serif, system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif</code></td>
+            <td>400 body · 500 controls · 600 headings</td>
+          </tr>
+          <tr>
+            <td>Docs / manual</td>
+            <td>Same stack; optional Inter if bundled</td>
+            <td>400 prose · 600 titles</td>
+          </tr>
+          <tr>
+            <td>Code / addresses</td>
+            <td><code>ui-monospace, SFMono-Regular, Menlo, Consolas, monospace</code></td>
+            <td>400–500</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ===================== 06 INCORRECT ===================== -->
+    <section id="incorrect">
+      <header>
+        <span class="sec-num">06</span>
+        <h2>Incorrect use</h2>
+      </header>
+      <p>Protect the mark. If it looks flashy, stretched, or playful, it is wrong.</p>
+      <div class="dont-grid" style="margin-top:1.25rem">
+        <div class="dont">
+          <div class="dont-visual bad-stretch">
+            <img src="./mark-rail-check.svg" alt="" />
+          </div>
+          <div class="dont-body">
+            <strong>Don’t stretch</strong>
+            <span>Keep aspect ratio. Scale uniformly only.</span>
+          </div>
+        </div>
+        <div class="dont">
+          <div class="dont-visual bad-recolor">
+            <img src="./mark-rail-check.svg" alt="" />
+          </div>
+          <div class="dont-body">
+            <strong>Don’t recolor arbitrarily</strong>
+            <span>Accent #2B5EA7 only—no rainbow or brand mashups.</span>
+          </div>
+        </div>
+        <div class="dont">
+          <div class="dont-visual bad-neon">
+            <img src="./mark-rail-check.svg" alt="" />
+          </div>
+          <div class="dont-body">
+            <strong>Don’t add neon</strong>
+            <span>No glow, gradients, or cyber aesthetic.</span>
+          </div>
+        </div>
+        <div class="dont">
+          <div class="dont-visual bad-shadow">
+            <img src="./mark-rail-check.svg" alt="" />
+          </div>
+          <div class="dont-body">
+            <strong>Don’t drop shadows</strong>
+            <span>Flat mark on flat surfaces. No soft UI chrome.</span>
+          </div>
+        </div>
+        <div class="dont">
+          <div class="dont-visual bad-rotate">
+            <img src="./mark-rail-check.svg" alt="" />
+          </div>
+          <div class="dont-body">
+            <strong>Don’t rotate</strong>
+            <span>Rails stay horizontal—always level.</span>
+          </div>
+        </div>
+        <div class="dont">
+          <div class="dont-visual bad-separate">
+            <div class="part" style="height:8px;width:36px;border-radius:2px"></div>
+            <div class="part" style="height:8px;width:36px;border-radius:2px"></div>
+            <span style="color:var(--accent);font-size:1.5rem;font-weight:700">✓</span>
+          </div>
+          <div class="dont-body">
+            <strong>Don’t separate rails from check</strong>
+            <span>The lockup is one unit; never rearrange parts.</span>
+          </div>
+        </div>
+        <div class="dont" style="grid-column:1 / -1">
+          <div class="dont-visual bad-emoji">
+            ✅ 🛤️
+          </div>
+          <div class="dont-body">
+            <strong>Don’t replace the check with emoji</strong>
+            <span>No ✅, ✔️, or track emoji as a stand-in for the mark.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 07 APPLICATION ===================== -->
+    <section id="application">
+      <header>
+        <span class="sec-num">07</span>
+        <h2>Application</h2>
+      </header>
+
+      <h3>Console top bar</h3>
+      <div class="mock-topbar">
+        <div class="mock-topbar-inner">
+          <div class="mock-brand">
+            <img src="./wordmark-rail-check-light.svg" alt="MandateRail" />
+            <span class="mock-badge">TestNet</span>
+          </div>
+          <button type="button" class="mock-btn" tabindex="-1">Connect wallet</button>
+        </div>
+        <div class="mock-caption">
+          Wordmark height 32px (h-8) · gap to TestNet badge 12px (gap-3) · badge outside clear space
+        </div>
+      </div>
+
+      <h3>Favicon</h3>
+      <p>
+        Ship <code>favicon-rail-check.svg</code> as the site favicon (<code>/favicon.svg</code>).
+        Confirm it remains the default alongside the TopBar wordmark.
+      </p>
+      <div class="avatar-row">
+        <div class="avatar">
+          <div class="avatar-box sm">
+            <img src="./favicon-rail-check.svg" alt="" />
+          </div>
+          <span>Tab 16–32</span>
+        </div>
+      </div>
+
+      <h3>GitHub / social avatar (future)</h3>
+      <div class="avatar-row" style="margin-top:0.75rem">
+        <div class="avatar">
+          <div class="avatar-box">
+            <img src="./mark-rail-check.svg" alt="" />
+          </div>
+          <span>Light</span>
+        </div>
+        <div class="avatar">
+          <div class="avatar-box dark">
+            <img src="./mark-rail-check.svg" alt="" />
+          </div>
+          <span>Dark</span>
+        </div>
+        <div class="avatar">
+          <div class="avatar-box" style="width:96px;height:96px;border-radius:16px">
+            <img src="./previews/mark-rail-check-light.png" alt="Preview light" style="width:72px;height:72px;object-fit:contain" />
+          </div>
+          <span>Preview PNG</span>
+        </div>
+      </div>
+      <p class="note" style="margin-top:1.25rem">
+        Prefer the mark alone in a square avatar (paper or ink field). Do not squeeze the full wordmark
+        into a circular crop.
+      </p>
+    </section>
+
+    <!-- ===================== 08 VOICE ===================== -->
+    <section id="voice">
+      <header>
+        <span class="sec-num">08</span>
+        <h2>Voice</h2>
+      </header>
+      <p class="lead">
+        Calm, precise, developer-respecting. Explain mechanisms; don’t sell vibes.
+        Institutional trust over growth-hack energy.
+      </p>
+      <div class="voice-pair" style="margin-top:1.25rem">
+        <div class="voice-do">
+          <h4>Do say</h4>
+          <p>“Approve the mandate before the agent can settle.”</p>
+        </div>
+        <div class="voice-dont">
+          <h4>Don’t say</h4>
+          <p>“Unleash autonomous money printers on L1 🚀”</p>
+        </div>
+        <div class="voice-do">
+          <h4>Do say</h4>
+          <p>“Policy-gated settlement on Algorand TestNet.”</p>
+        </div>
+        <div class="voice-dont">
+          <h4>Don’t say</h4>
+          <p>“The ultimate DeFi agent casino rail.”</p>
+        </div>
+      </div>
+      <ul style="margin-top:1.5rem;padding-left:1.25rem;color:var(--slate-700);font-size:0.9375rem">
+        <li style="margin-bottom:0.4rem">Prefer short declarative sentences.</li>
+        <li style="margin-bottom:0.4rem">Name the control surface: mandate, approval, receipt, bridge.</li>
+        <li style="margin-bottom:0.4rem">No neon copy, no mascot voice, no FOMO.</li>
+        <li>Apache-2.0 and open-source posture when relevant—quietly, not as a badge farm.</li>
+      </ul>
+    </section>
+
+    <!-- ===================== 09 ASSETS ===================== -->
+    <section id="assets">
+      <header>
+        <span class="sec-num">09</span>
+        <h2>Asset file list</h2>
+      </header>
+      <p>Canonical rail-check set under <code>apps/web/public/brand/</code>:</p>
+      <ul class="assets">
+        <li>
+          <span class="file">mark-rail-check.svg</span>
+          <span class="desc">Primary mark</span>
+        </li>
+        <li>
+          <span class="file">wordmark-rail-check-light.svg</span>
+          <span class="desc">Wordmark · ink type</span>
+        </li>
+        <li>
+          <span class="file">wordmark-rail-check-dark.svg</span>
+          <span class="desc">Wordmark · paper type</span>
+        </li>
+        <li>
+          <span class="file">favicon-rail-check.svg</span>
+          <span class="desc">Favicon source</span>
+        </li>
+        <li>
+          <span class="file">../favicon.svg</span>
+          <span class="desc">Site favicon (= rail-check)</span>
+        </li>
+        <li>
+          <span class="file">previews/mark-rail-check-light.png</span>
+          <span class="desc">PNG preview · paper</span>
+        </li>
+        <li>
+          <span class="file">previews/mark-rail-check-dark.png</span>
+          <span class="desc">PNG preview · ink</span>
+        </li>
+        <li>
+          <span class="file">manual.html</span>
+          <span class="desc">This brand manual</span>
+        </li>
+        <li>
+          <span class="file">MANUAL.md</span>
+          <span class="desc">Pointer to HTML manual</span>
+        </li>
+        <li>
+          <span class="file">README.md</span>
+          <span class="desc">Mark variants overview</span>
+        </li>
+      </ul>
+    </section>
+
+    <footer class="manual-footer">
+      <span>MandateRail Brand Manual · v1.0 · September 2026 · Apache-2.0</span>
+      <span>Default direction: rail-check</span>
+    </footer>
+  </main>
+</body>
+</html>

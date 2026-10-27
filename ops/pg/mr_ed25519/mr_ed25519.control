@@ -1,0 +1,7 @@
+comment = 'MandateRail: Ed25519 verify only (libsodium, static)'
+default_version = '1.0'
+module_pathname = '$libdir/mr_ed25519'
+relocatable = false
+schema = mr_crypto
+superuser = true
+trusted = false

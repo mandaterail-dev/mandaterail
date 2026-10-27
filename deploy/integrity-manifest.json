@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 17,
+  "generatedBy": "packages/storage/src/r26-hardening.test.ts (MR_UPDATE_INTEGRITY_MANIFEST=1); then update INTEGRITY_MANIFEST_SHA256 in monitor.ts",
+  "functions": {
+    "mr_jcs(jsonb)": "3374026addfc4c707e5df9700cbc4318",
+    "mr_network_write_once()": "c215b25fe192dd35f6932124d696408e",
+    "mr_provider_host_refused(text)": "9d2ce528730cb0547d361de053e2fa16",
+    "mr_set_tamper_cooldown_base(integer)": "cc0afe87b3e1f8e5c513ced172a9a6b8",
+    "mr_signer_revoke(text,text)": "6de0a38cc4a2164913a871d06847ba1c",
+    "mr_signer_tables_guard()": "feb6a8b101d8fdde20bebb51ad2f376d",
+    "mr_spend_app_finalize(text,text,text,text)": "4d1a6b8efd1090db5675caa531c30dc9",
+    "mr_spend_audit_append_only()": "cfe2c6d7147fdb72adccd860a2778b30",
+    "mr_spend_guard()": "305f5c25c4852c16d1e8a98117cc6c7f",
+    "mr_spend_pending_signed_to_ambiguous(text,bigint)": "e93a8c91c483d0edffb469236456e647",
+    "mr_spend_release(text,text,text,text,text,text,bigint,integer,text,text,text,bigint,integer,text,text,text,bigint,integer)": "dc67f438b0ffb66f4c2ccc9286a2fcc6",
+    "mr_spend_release_attested(text,text,bytea,bytea,bytea,bytea,text,text)": "d86ffc3531e8e7ab29239445392e322d",
+    "mr_spend_release_attested(text,text,bytea,bytea,text,text)": "fb00972880785bae867aabbc78a973b1",
+    "mr_spend_release_attested_v11(text,text,bytea,bytea,text,text)": "30eaaf1a647768b71634e1e845cb420c",
+    "mr_spend_release_attested_v12(text,text,bytea,bytea,bytea,bytea,text,text)": "1b21fbd2866c2059344329bc3cf67dea",
+    "mr_spend_settle(text,text,text[],text,text,text,text,text)": "be795f54f8795bdbbc3123fa6353002d",
+    "mr_spend_signed_guard()": "02c8287055086fdae3dfc554afa10fa2",
+    "mr_tamper_pause(text)": "42c4e2c46f6c7c3737bae07357227a57",
+    "mr_tamper_resume(bytea,bytea,bytea,bytea)": "325ea959067c1375fc48bd7d071ea6b2",
+    "mr_v12_domain_matches(text,text)": "494392640254cc021a7a96118722f3b8",
+    "mr_v12_guard()": "f81bddc3b1748777d5fad1311ecaf399",
+    "mr_v12_signer_domain_guard()": "b51df4deeefa799fc21e2c1b4dbda104",
+    "mr_v16_acl_fp()": "afccd71af7c0cc70beea0c1d82be0f4a",
+    "mr_v16_acl_pin_guard()": "32612e4ed051211d48c619b991652813",
+    "mr_v16_audit(text,text,jsonb,jsonb)": "f84362f2ca3325426d77111ba98c3b45",
+    "mr_v16_cooldown(integer,integer)": "63eab59cea6af901bae81c99381c1aa0",
+    "mr_v16_guard()": "714ed931fd223ca2ec88ec6e43bec796",
+    "mr_v16_nonce_ledger()": "6e878ebabc2850b50b4b3d8c9ba8b893",
+    "mr_v16_parse(bytea,text,text[])": "90624bfabacd9211cc7b799738e3dec7",
+    "mr_window_lock_holders()": "4c631bdbec4ec20fc8f1a3fbe4771178"
+  },
+  "aclHash": "070c4df3a18520c99502fe32a855e8a2",
+  "aclFp": "0c7d91283b341d0434fb7ccd7198ab79",
+  "constraintsHash": "ea8c760a9a7aeb56feb32461c7412053",
+  "ownersHash": "e09e99539e5e6f2226e2c1a1bb14cb96",
+  "triggersHash": "1d698ea1f641bad0b160435ec55a7f99",
+  "rolesHash": "822be666371cdd963fe025d6d156dbb3",
+  "releaseCaps": {
+    "mainnet": "10000/50000",
+    "testnet": "10000000/50000000"
+  },
+  "anchor": {
+    "mainnet": {
+      "prefix": "mr-monitor-anchor/mainnet/",
+      "minSeq": 0,
+      "retainDaysMin": 365,
+      "pubkey": null,
+      "skip": [],
+      "requireSigned": true
+    },
+    "testnet": {
+      "prefix": "mr-monitor-anchor/testnet/",
+      "minSeq": 0,
+      "retainDaysMin": 365,
+      "pubkey": null,
+      "skip": [],
+      "requireSigned": false
+    }
+  },
+  "verifierSoftkey": {
+    "mainnet": false,
+    "testnet": true
+  }
+}

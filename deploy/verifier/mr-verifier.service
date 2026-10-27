@@ -1,0 +1,57 @@
+# mr-verifier (v12 second verifier, §15): a DIFFERENT host and cloud account from mr-signer. Not provisioned anywhere yet.
+# Secrets only in the credential store / 0600 env file; config JSON has none.
+[Unit]
+Description=mr-verifier (second verifier, co-signs attested releases)
+Wants=network-online.target chronyd.service wg-quick@wg0.service mr-egress-refresh.service
+After=network-online.target chronyd.service wg-quick@wg0.service mr-egress-refresh.service
+# chronyd must be RUNNING (a pid file does not mean synced; the service checks sync/offset on every request
+# and in the heartbeat, and refuses when unsynced)
+ConditionPathExists=/run/chrony/chronyd.pid
+
+# a refused boot (rollback, minSeq, wiped state) must not loop quietly: 3 tries then stay down (the dead-man fires)
+StartLimitIntervalSec=600
+StartLimitBurst=3
+
+[Service]
+Type=simple
+User=mr-verifier
+Group=mr-verifier
+SupplementaryGroups=mr-verifier
+Environment=MR_VERIFIER_CONFIG=/etc/mr-verifier/config.json NODE_ENV=production
+# MR_NTFY_TOPIC (its own topic) and MR_HC_PING_URL; 0600 root, read by systemd. Its key: YubiKey (own card) via ykcs11
+EnvironmentFile=/etc/mr-verifier/secrets.env
+ExecStart=/usr/bin/node /opt/mr-verifier/current/packages/signer/dist/verifier/main.js
+Restart=on-failure
+RestartSec=30
+StateDirectory=mr-verifier
+StateDirectoryMode=0700
+ProtectSystem=strict
+ReadWritePaths=/var/lib/mr-verifier
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+NoNewPrivileges=yes
+# egress: HTTPS to its own pinned providers, ntfy, Healthchecks (no B2: the verifier has no audit sink yet, §15.7); ingress: the WireGuard address only (nftables does the rest)
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+# (address filtering is done by deploy/verifier/nftables.conf with per-uid egress rules; systemd IPAddress* can't name hosts)
+CapabilityBoundingSet=
+AmbientCapabilities=
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources @mount @debug
+SystemCallArchitectures=native
+MemoryDenyWriteExecute=no
+LockPersonality=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+RemoveIPC=yes
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

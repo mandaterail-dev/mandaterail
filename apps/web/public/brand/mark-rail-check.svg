@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="MandateRail rail-check mark">
+  <title>MandateRail rail-check</title>
+  <!-- Two parallel rails with a subtle check/seal notch — institutional -->
+  <rect x="8" y="22" width="48" height="5" rx="1.5" fill="#2B5EA7"/>
+  <rect x="8" y="37" width="48" height="5" rx="1.5" fill="#2B5EA7"/>
+  <!-- Vertical tie / seal notch between rails -->
+  <rect x="29.5" y="22" width="5" height="20" rx="1" fill="#2B5EA7"/>
+  <!-- Subtle check notch cut into right side of upper rail area -->
+  <path d="M40 18 L46 24 L56 12" fill="none" stroke="#2B5EA7" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

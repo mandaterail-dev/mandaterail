@@ -1,0 +1,3 @@
+forwarder.zip
+.terraform/
+.terraform.lock.hcl.bak

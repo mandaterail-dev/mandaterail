@@ -1,0 +1,1 @@
+7 * * * * <workdir>/mr-lockdown/run-check.sh >><workdir>/mr-lockdown/cron.err 2>&1

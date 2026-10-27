@@ -1,0 +1,15 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "kms:GetKeyPolicy",
+            "Resource": "arn:aws:kms:us-east-1:860273388508:key/7b2d2a83-0633-439e-8214-713c449fdd0c"
+        },
+        {
+            "Effect": "Allow",
+            "Action": "sns:Publish",
+            "Resource": "arn:aws:sns:us-east-1:860273388508:mr-kms-backup-alerts"
+        }
+    ]
+}

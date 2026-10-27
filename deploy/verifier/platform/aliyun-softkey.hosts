@@ -1,0 +1,2 @@
+# aliyun-softkey (rev 24 §24.8): no key-service endpoint at all (the key is a local file). No AWS, no Alibaba KMS.
+# Only the common hosts below: dRPC (MainNet chain provider), ntfy, Healthchecks, B2, GCP log read.

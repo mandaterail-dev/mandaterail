@@ -1,0 +1,11 @@
+{
+  "_comment": "MainNet signer runtime config (the owner, 2026-10-22 19:31 ET: the GCP Cloud KMS key is the MainNet main signer; kms-keys.json active.signer = gcp). Install as /etc/mr-piv/cloudkms.mainnet.json (deploy/gcp/mr-piv-sign@.service). The live key needs the changes in docs/ops/kms-key-order.md before it can sign.",
+  "role": "active",
+  "network": "mainnet",
+  "keyVersionName": "projects/mandaterail-signer-25615/locations/us-east1/keyRings/mandaterail/cryptoKeys/signer/cryptoKeyVersions/1",
+  "keyResource": "projects/mandaterail-signer-25615/locations/us-east1/keyRings/mandaterail/cryptoKeys/signer/cryptoKeyVersions/1",
+  "pubkeyB64": "wzlH1zl4bLn/eJo0alyNeeGjhoFnPEr+bSXBqdOUXpQ=",
+  "protectionLevel": "SOFTWARE",
+  "serviceAccountEmail": "mr-signer@mandaterail-signer-25615.iam.gserviceaccount.com",
+  "metadataBase": "http://169.254.169.254"
+}

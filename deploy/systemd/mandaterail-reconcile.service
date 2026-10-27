@@ -1,0 +1,21 @@
+[Unit]
+Description=MandateRail spend reconcile (T11; non-owner role mr_reconcile)
+After=network-online.target
+Wants=network-online.target
+[Service]
+Type=oneshot
+User=mandaterail
+Group=mandaterail
+WorkingDirectory=/opt/mandaterail/current/packages/storage
+# root 0600: DATABASE_URL (mr_reconcile), NETWORK, INDEXER_URL, MONITOR_HEALTH_URLS
+EnvironmentFile=/etc/mandaterail/state-reconcile.env
+Environment=STATE_ENV_FILE=/dev/null
+# R30-P3-3: no tsx transform cache (a tampered cache entry would run altered code)
+Environment=TSX_DISABLE_CACHE=1
+ExecStart=/usr/bin/node /opt/mandaterail/current/node_modules/tsx/dist/cli.mjs src/spend-cli.ts reconcile --store demo-api
+TimeoutStartSec=240
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+SyslogIdentifier=mandaterail-reconcile

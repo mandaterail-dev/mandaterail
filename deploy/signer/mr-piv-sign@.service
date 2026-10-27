@@ -1,0 +1,42 @@
+# R43-P2-4: one instance per accepted connection; fd 0/1 = the connection. MR_SIGNER_UID is filled at image build.
+[Unit]
+Description=mr-piv-sign helper (one request)
+# R45-P3-1: DeviceAllow resolves the symlink when the unit starts; bind to the device unit so a replug
+# (new hidraw node) stops this instance and the next connection starts a fresh one on the new node.
+BindsTo=dev-mr\x2dyubikey.device
+After=dev-mr\x2dyubikey.device
+
+[Service]
+Type=oneshot
+User=mr-piv
+Group=mr-piv
+StandardInput=socket
+StandardOutput=socket
+StandardError=journal
+ExecStart=/usr/local/bin/mr-peercred-gate @MR_SIGNER_UID@ /usr/local/bin/mr-piv-sign --stdio
+LoadCredentialEncrypted=piv-pin:/etc/credstore.encrypted/piv-pin
+TimeoutStartSec=30
+ProtectSystem=strict
+ReadWritePaths=/var/lib/mr-piv
+ProtectHome=yes
+PrivateTmp=yes
+NoNewPrivileges=yes
+PrivateNetwork=yes
+IPAddressDeny=any
+RestrictAddressFamilies=AF_UNIX
+DevicePolicy=closed
+# R44-P3: only the pinned YubiKey (by serial) via the udev symlink in 70-mr-yubikey.rules; no other USB
+# device. The PIV path goes through pcscd (AF_UNIX, polkit limits it to mr-piv); this allowance only covers the
+# hidraw node used for the touch/presence check.
+DeviceAllow=/dev/mr-yubikey rw
+CapabilityBoundingSet=
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources @mount @debug
+SystemCallArchitectures=native
+LockPersonality=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+UMask=0077

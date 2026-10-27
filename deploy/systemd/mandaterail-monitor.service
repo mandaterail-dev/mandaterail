@@ -1,0 +1,26 @@
+[Unit]
+Description=MandateRail monitor: health of 3 endpoints + stale spend rows (T11)
+After=network-online.target
+Wants=network-online.target
+[Service]
+Type=oneshot
+User=mandaterail
+Group=mandaterail
+WorkingDirectory=/opt/mandaterail/current/packages/storage
+# root 0600: DATABASE_URL (read-only mr_monitor role, R21-P3-2), NETWORK, MONITOR_HEALTH_URLS,
+# optional MONITOR_PAGER_WEBHOOK_URL / MONITOR_PAGER_FORMAT (R21-P3-1). Exit 2 on any alert.
+EnvironmentFile=/etc/mandaterail/state-monitor.env
+Environment=STATE_ENV_FILE=/dev/null
+# R30-P3-3: no tsx transform cache (a tampered cache entry would run altered code)
+Environment=TSX_DISABLE_CACHE=1
+# R31-P3-1/3: root attests sha256 of files the monitor user can't read (secret env
+# files, root-only scripts); the monitor compares them with systemd_sha256 in the pin.
+# R32-P3-2: root-owned dir (NOT RuntimeDirectory=, which would be owned by the monitor user).
+ExecStartPre=+/bin/sh -c 'umask 022; set -e; d=/run/mandaterail-attest; if [ -L $d ] || { [ -e $d ] && [ ! -d $d ]; }; then rm -f $d; fi; install -d -o root -g root -m 0755 $d; /usr/bin/sha256sum /etc/mandaterail/*.env /usr/local/sbin/mandaterail-* > $d/root-sha256.tmp; mv -f $d/root-sha256.tmp $d/root-sha256'
+ExecStart=/usr/bin/node /opt/mandaterail/current/node_modules/tsx/dist/cli.mjs src/spend-cli.ts monitor --store demo-api --older-than-min 30
+TimeoutStartSec=120
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+SyslogIdentifier=mandaterail-monitor

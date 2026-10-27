@@ -1,0 +1,26 @@
+# R52-P3-1: OnFailure= target for the verifier's oneshots (OnFailure=mr-verifier-page@%n.service). Posts the failed
+# unit's name to the verifier's own ntfy topic. Runs as mr-verifier (the uid nftables lets reach ntfy.sh); the topic
+# comes from the 0600 secrets file and is never logged. If the allowlist itself is what failed, ntfy may be
+# unreachable: the Healthchecks dead-man (missed heartbeat) is the backstop.
+[Unit]
+Description=page: %i failed (mr-verifier)
+
+[Service]
+Type=oneshot
+User=mr-verifier
+Group=mr-verifier
+EnvironmentFile=/etc/mr-verifier/secrets.env
+Environment=MR_NTFY_SERVER=https://ntfy.sh
+# R53-P3-3: the topic never reaches any argv: "$$" keeps systemd from expanding it into sh's argv, printf is a
+# shell builtin, and curl reads the URL from its config on stdin (-K -), so /proc/*/cmdline holds no topic.
+ExecStart=/bin/sh -c 'printf "url = \"%%s/%%s\"\n" "$${MR_NTFY_SERVER}" "$${MR_NTFY_TOPIC}" | exec /usr/bin/curl -K - -fsS --max-time 20 --proto =https -H "Title: [verifier] unit failed" -H "Priority: high" -d "%i failed on %H" -o /dev/null'
+ProtectSystem=strict
+# R67-P3-5: same uid as mr-verifier, so the softkey dir is hidden here too
+InaccessiblePaths=-/var/lib/mr-verifier-key
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+NoNewPrivileges=yes
+RestrictAddressFamilies=AF_INET AF_INET6
+CapabilityBoundingSet=
+TimeoutStartSec=30
